@@ -1,2 +1,2 @@
 #dev-repo
-auth
+authtest

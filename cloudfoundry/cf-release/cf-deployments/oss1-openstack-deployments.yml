@@ -1,0 +1,1629 @@
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+  network: cf1
+  reuse_compilation_vms: true
+  workers: 6
+director_uuid: 54bc4b2c-57c6-4dc1-9d36-9bddc62f8489
+jobs:
+- instances: 1
+  name: consul_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.52
+  persistent_disk: 1024
+  properties:
+    consul:
+      agent:
+        mode: server
+    metron_agent:
+      zone: z1
+  resource_pool: small_z1
+  templates:
+  - name: consul_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+    serial: true
+- instances: 0
+  name: consul_z2
+  networks:
+  - name: cf2
+    static_ips: []
+  persistent_disk: 1024
+  properties:
+    consul:
+      agent:
+        mode: server
+    metron_agent:
+      zone: z2
+  resource_pool: small_z2
+  templates:
+  - name: consul_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+    serial: true
+- default_networks:
+  - name: cf1
+    static_ips: null
+  instances: 1
+  name: ha_proxy_z1
+  networks:
+#  - name: floating
+#    static_ips:
+#    - 10.13.32.70
+  - default: [dns, gateway]
+    name: cf1
+    static_ips:
+    - 10.10.5.40
+  properties:
+    ha_proxy:
+      disable_http: false
+      ssl_ciphers: null
+      ssl_pem: |+                  # SSL Key
+        -----BEGIN CERTIFICATE-----
+        MIIDmDCCAoACCQD8mbiHIO6CkDANBgkqhkiG9w0BAQsFADCBjDELMAkGA1UEBhMC
+        S1IxDjAMBgNVBAgMBVNlb3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARr
+        dGRzMQ4wDAYDVQQLDAVjbG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEh
+        MB8GCSqGSIb3DQEJARYSamluLXN1Lm1vb25Aa3QuY29tMCAXDTE1MTAyOTA1MTcy
+        MVoYDzIxMTUxMDA1MDUxNzIxWjCBjDELMAkGA1UEBhMCS1IxDjAMBgNVBAgMBVNl
+        b3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARrdGRzMQ4wDAYDVQQLDAVj
+        bG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEhMB8GCSqGSIb3DQEJARYS
+        amluLXN1Lm1vb25Aa3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+        AQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorUJE9OU7HpFUec
+        NGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7htRs87I6YH/bmZ
+        EU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE15iq3do0JB8Vf
+        zxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN0EZEu4kDiREp
+        C3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tjndiwf1P5vTw/
+        6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQDSaeE/
+        4pdTGCLQHvtODDlJuOd/z2d+jStHB4RR2iNgS9dhzaPzrg3+DeMkNFj+pwNmcBn5
+        pvtaYn37lAjfm0jA72T0z1u1+i24xKuXnBM5/eN5g94ZuRCdXiwpJXtDai/LJRox
+        0Zw3jBvdiwZqo9pKjraySQdcSNiaIxRkZFefIezGw4LQ9mROkuGVQCVlVATVDNwr
+        C4uVkdl/Csl1VSbE6jKiSl/Hg6JgtJnEK+Z+cyVQZH+iaU1UI6hGo6VMsYCB5ObP
+        9JM4UbUTVIDWPXgq8k+29avGpWlvIoWlp5xI/m/NPTZXjj9JuqM7mw0yX6PkLMQp
+        spNcm1KYtyXOmWvV
+        -----END CERTIFICATE-----
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpAIBAAKCAQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorU
+        JE9OU7HpFUecNGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7ht
+        Rs87I6YH/bmZEU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE1
+        5iq3do0JB8VfzxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN
+        0EZEu4kDiREpC3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tj
+        ndiwf1P5vTw/6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABAoIBAET0wuNxP66MPvY3
+        WojvDc7mPYGXJjB/qAmb0rd6uHCkWtdTFo2qVoRA87Kc+RQ6XZKBjQUrJ1ChHBBE
+        mTqhrf0fqCo5pNJblhkeBkG12yCfY5PEmJapMdnvnCgwkpBmwZPr4wOVJLGVKPx4
+        lcmHbGh3mDbxuGVonVtdBivnhXmKdKTsodtSIcWkaCFU4/3+FJQzgkPGgXaxdhIv
+        Eqvd+DaCHnAMxk206o5BEdIl0X18cN3GTS1R901mMl+dzv/PBNtSiZ0rstdek1ma
+        XwPE+Zo/vDWWBDnU2989PFJqaV8AzOrN46moByHG07frc2GsF6D2CYCJLDbBHC+x
+        Aak8MpECgYEA/szekTbNXzfZ6VxzUoyC4f3asfa74+mimzBLqeMzsxgr2+Vwz6/P
+        rAIwbjYD9rno+xGHwjA9wuId14ZuaTQKIhHePhMlGK9amohahEPeYNwohB9uskUO
+        bYvCsjZwybhe9V409W9ct2HDmo24Bro27iXBudxblJQeMxci7zwNQaUCgYEA13aP
+        TrZi7oibgqHLyRLJu67WXrq62QAM1ruYavLd9Cvay1ap25RptKoyLC4ORz8FuwhC
+        PYXHdTwnTWuVDQMIRR/fh/IYS6TV3UM2hQmTdpdVTO+MKXC9guEGksY/m2kYc0E2
+        +gmnkEdLLnlma4ou35WeU3Uth7i9HKqs/N9YPcUCgYEAymk5TaZ5U3Ds3SMiQat5
+        tcmR19onvJA3Ko0dLmJdCaLkBJWqHnKNyRkcHBEw6OkbGYf9jtf/2DcEedhDEbPT
+        cOk84ZcX2xpCIYy8S2IW4F9EmGDX8SpGoeNq0WPKCZU7ajRiYa8Lumohlz+Jt15q
+        kJjR4rIY1lkr/G4exGmyJjkCgYEAy8/JpZJfKPYt7DbyVsSf8Rpki30lC+nBO0p+
+        1gPgsnzdXWUgDaZpC03HYgU62mgiGpaoWhv23c3F+7UdbA6HPyP0RVtbYgqNhtxy
+        cQvq4s4qETmzouuTSH9lwWcoefDDARsaTxDc4VyfIFoT6PvwdOzJtHZuWCkHMlu8
+        gQMgLGUCgYAnXdI7V6yagCdnBfZjn0i5943OG9PrrLumnynre6HHf4RcyGioiGqg
+        YHBxaxlChEts6H6RcQ0Q5yVFoCVtg4lZzb7mzhTf3Q/OuIVbjib40lfwDHIBMA7T
+        AOfWY90ipsDk2xGkwuJwPmDaE8rHxYWMJJDWR0eBUqcGGfl9Jn5A0w==
+        -----END RSA PRIVATE KEY-----
+    metron_agent:
+      zone: z1
+    router:
+      servers:
+        z1:
+        - 10.10.5.45
+        z2: []
+  resource_pool: router_z1
+  templates:
+  - name: haproxy
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: nats_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.42
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: nats
+    release: cf
+  - name: nats_stream_forwarder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 0
+  name: nats_z2
+  networks:
+  - name: cf2
+    static_ips: []
+  properties:
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: nats
+    release: cf
+  - name: nats_stream_forwarder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: etcd_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.48
+  persistent_disk: 10024
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: etcd
+    release: cf
+  - name: etcd_metrics_server
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+- instances: 0
+  name: etcd_z2
+  networks:
+  - name: cf2
+    static_ips: []
+  persistent_disk: 10024
+  properties:
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: etcd
+    release: cf
+  - name: etcd_metrics_server
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+- instances: 1
+  name: stats_z1
+  networks:
+  - name: cf1
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: small_z1
+  templates:
+  - name: collector
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: nfs_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.43
+  persistent_disk: 102400
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: debian_nfs_server
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: postgres_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.44
+  persistent_disk: 4096
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: postgres
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: uaa_z1
+  networks:
+  - name: cf1
+  properties:
+    consul:
+      agent:
+        services:
+          uaa: {}
+    metron_agent:
+      zone: z1
+    route_registrar:
+      routes:
+      - name: uaa
+        port: 8080
+        tags:
+          component: uaa
+        uris:
+        - uaa.controller.ktds.cloud.com
+        - '*.uaa.controller.ktds.cloud.com'
+        - login.controller.ktds.cloud.com
+        - '*.login.controller.ktds.cloud.com'
+    uaa:
+      proxy:
+        servers:
+        - 10.10.5.45
+  resource_pool: medium_z1
+  templates:
+  - name: uaa
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  - name: statsd-injector
+    release: cf
+  update: {}
+- instances: 0
+  name: uaa_z2
+  networks:
+  - name: cf2
+  properties:
+    consul:
+      agent:
+        services:
+          uaa: {}
+    metron_agent:
+      zone: z2
+    route_registrar:
+      routes:
+      - name: uaa
+        port: 8080
+        tags:
+          component: uaa
+        uris:
+        - uaa.controller.ktds.cloud.com
+        - '*.uaa.controller.ktds.cloud.com'
+        - login.controller.ktds.cloud.com
+        - '*.login.controller.ktds.cloud.com'
+    uaa:
+      proxy:
+        servers:
+        - 10.10.5.45
+  resource_pool: medium_z2
+  templates:
+  - name: uaa
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  - name: statsd-injector
+    release: cf
+  update: {}
+- instances: 1
+  name: api_z1
+  networks:
+  - name: cf1
+  persistent_disk: 0
+  properties:
+    consul:
+      agent:
+        services:
+          cloud_controller_ng: {}
+          routing-api: {}
+    metron_agent:
+      zone: z1
+    nfs_server:
+      address: 10.10.5.43
+      allow_from_entries:
+      - 10.10.5.0/24
+      - 10.10.6.0/24
+      share: null
+    route_registrar:
+      routes:
+      - name: api
+        port: 9022
+        tags:
+          component: CloudController
+        uris:
+        - api.controller.ktds.cloud.com
+  resource_pool: large_z1
+  templates:
+  - name: cloud_controller_ng
+    release: cf
+  - name: routing-api
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: statsd-injector
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: nfs_mounter
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- instances: 0
+  name: api_z2
+  networks:
+  - name: cf2
+  persistent_disk: 0
+  properties:
+    consul:
+      agent:
+        services:
+          cloud_controller_ng: {}
+          routing-api: {}
+    metron_agent:
+      zone: z2
+    nfs_server:
+      address: 10.10.5.43
+      allow_from_entries:
+      - 10.10.5.0/24
+      - 10.10.6.0/24
+      share: null
+    route_registrar:
+      routes:
+      - name: api
+        port: 9022
+        tags:
+          component: CloudController
+        uris:
+        - api.controller.ktds.cloud.com
+  resource_pool: large_z2
+  templates:
+  - name: cloud_controller_ng
+    release: cf
+  - name: routing-api
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: statsd-injector
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: nfs_mounter
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- instances: 1
+  name: clock_global
+  networks:
+  - name: cf1
+  persistent_disk: 0
+  properties:
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: cloud_controller_clock
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: api_worker_z1
+  networks:
+  - name: cf1
+  persistent_disk: 0
+  properties:
+    metron_agent:
+      zone: z1
+    nfs_server:
+      address: 10.10.5.43
+      allow_from_entries:
+      - 10.10.5.0/24
+      - 10.10.6.0/24
+      share: null
+  resource_pool: small_z1
+  templates:
+  - name: cloud_controller_worker
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: nfs_mounter
+    release: cf
+  update: {}
+- instances: 0
+  name: api_worker_z2
+  networks:
+  - name: cf2
+  persistent_disk: 0
+  properties:
+    metron_agent:
+      zone: z2
+    nfs_server:
+      address: 10.10.5.43
+      allow_from_entries:
+      - 10.10.5.0/24
+      - 10.10.6.0/24
+      share: null
+  resource_pool: small_z2
+  templates:
+  - name: cloud_controller_worker
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  - name: nfs_mounter
+    release: cf
+  update: {}
+- instances: 1
+  name: hm9000_z1
+  networks:
+  - name: cf1
+  properties:
+    metron_agent:
+      zone: z1
+    route_registrar:
+      routes:
+      - name: hm9000
+        port: 5155
+        tags:
+          component: HM9K
+        uris:
+        - hm9000.controller.ktds.cloud.com
+  resource_pool: medium_z1
+  templates:
+  - name: hm9000
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- instances: 0
+  name: hm9000_z2
+  networks:
+  - name: cf2
+  properties:
+    metron_agent:
+      zone: z2
+    route_registrar:
+      routes:
+      - name: hm9000
+        port: 5155
+        tags:
+          component: HM9K
+        uris:
+        - hm9000.controller.ktds.cloud.com
+  resource_pool: medium_z2
+  templates:
+  - name: hm9000
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- instances: 1
+  name: runner_z1
+  networks:
+  - name: cf1
+    static_ips: null
+  properties:
+    dea_next:
+      zone: z1
+    metron_agent:
+      zone: z1
+  resource_pool: runner_z1
+  templates:
+  - name: dea_next
+    release: cf
+  - name: dea_logging_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+- instances: 0
+  name: runner_z2
+  networks:
+  - name: cf2
+    static_ips: null
+  properties:
+    dea_next:
+      zone: z2
+    metron_agent:
+      zone: z2
+  resource_pool: runner_z2
+  templates:
+  - name: dea_next
+    release: cf
+  - name: dea_logging_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+- instances: 0
+  name: loggregator_z1
+  networks:
+  - name: cf1
+  properties:
+    doppler:
+      zone: z1
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: doppler
+    release: cf
+  - name: syslog_drain_binder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 0
+  name: loggregator_z2
+  networks:
+  - name: cf2
+  properties:
+    doppler:
+      zone: z2
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: doppler
+    release: cf
+  - name: syslog_drain_binder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: doppler_z1
+  networks:
+  - name: cf1
+  properties:
+    doppler:
+      zone: z1
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: doppler
+    release: cf
+  - name: syslog_drain_binder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 0
+  name: doppler_z2
+  networks:
+  - name: cf2
+  properties:
+    doppler:
+      zone: z2
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: doppler
+    release: cf
+  - name: syslog_drain_binder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: loggregator_trafficcontroller_z1
+  networks:
+  - name: cf1
+  properties:
+    metron_agent:
+      zone: z1
+    route_registrar:
+      routes:
+      - name: doppler
+        port: 8081
+        uris:
+        - doppler.controller.ktds.cloud.com
+      - name: loggregator
+        port: 8080
+        uris:
+        - loggregator.controller.ktds.cloud.com
+    traffic_controller:
+      zone: z1
+  resource_pool: small_z1
+  templates:
+  - name: loggregator_trafficcontroller
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- instances: 0
+  name: loggregator_trafficcontroller_z2
+  networks:
+  - name: cf2
+  properties:
+    metron_agent:
+      zone: z2
+    route_registrar:
+      routes:
+      - name: doppler
+        port: 8081
+        uris:
+        - doppler.controller.ktds.cloud.com
+      - name: loggregator
+        port: 8080
+        uris:
+        - loggregator.controller.ktds.cloud.com
+    traffic_controller:
+      zone: z2
+  resource_pool: small_z2
+  templates:
+  - name: loggregator_trafficcontroller
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: route_registrar
+    release: cf
+  update: {}
+- default_networks:
+  - name: cf1
+    static_ips: null
+  instances: 1
+  name: router_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 10.10.5.45
+  properties:
+    consul:
+      agent:
+        services:
+          gorouter: {}
+    metron_agent:
+      zone: z1
+  resource_pool: router_z1
+  templates:
+  - name: gorouter
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  update: {}
+- default_networks:
+  - name: cf2
+    static_ips: null
+  instances: 0
+  name: router_z2
+  networks:
+  - name: cf2
+    static_ips: []
+  properties:
+    consul:
+      agent:
+        services:
+          gorouter: {}
+    metron_agent:
+      zone: z2
+  resource_pool: router_z2
+  templates:
+  - name: gorouter
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  update: {}
+- instances: 1
+  lifecycle: errand
+  name: acceptance_tests
+  networks:
+  - name: cf1
+  resource_pool: small_errand
+  templates:
+  - name: acceptance-tests
+    release: cf
+- instances: 0
+  lifecycle: errand
+  name: smoke_tests
+  networks:
+  - name: cf1
+  properties: {}
+  resource_pool: small_errand
+  templates:
+  - name: smoke-tests
+    release: cf
+meta:
+  environment: null
+  releases:
+  - name: cf
+    version: latest
+name: cf-ktdspaas
+networks:
+- name: cf1
+  subnets:
+  - cloud_properties:
+      net_id: 7ce102a1-6ff7-45c6-8121-079f7ae2483d
+      security_groups:
+      - opsmanager
+      - default
+    dns:
+    - 192.168.0.110
+    - 8.8.8.8
+    gateway: 10.10.5.1
+    range: 10.10.5.0/24
+    reserved:
+    - 10.10.5.130 - 10.10.5.254
+    static:
+    - 10.10.5.40 - 10.10.5.80
+  type: manual
+- name: cf2
+  subnets:
+  - cloud_properties:
+      net_id: 528ee5de-87ee-4f6b-a6f6-76262650430e
+      security_groups:
+      - opsmanager
+      - default
+    dns:
+    - 192.168.0.110
+    - 8.8.8.8
+    gateway: 10.10.6.1
+    range: 10.10.6.0/24
+    reserved:
+    - 10.10.6.130 - 10.10.6.254
+    static:
+    - 10.10.6.2 - 10.10.6.30
+  type: manual
+- name: floating
+  subnets:
+  - cloud_properties:
+      net_id: 253a74b9-b6e4-4577-ad8d-0a2ecc17198f
+    dns:
+    - 10.13.31.68
+    gateway: 10.13.32.37
+    range: 10.13.32.0/24
+    reserved:
+    - 10.13.32.130 - 10.13.32.254
+    static:
+    - 10.13.32.2 - 10.13.32.30
+  type: manual
+properties:
+  acceptance_tests: null
+  app_domains:
+  - controller.ktds.cloud.com
+  app_ssh: null
+  cc:
+    allow_app_ssh_access: true
+    allowed_cors_domains: []
+    app_events:
+      cutoff_age_in_days: 31
+    app_usage_events:
+      cutoff_age_in_days: 31
+    audit_events:
+      cutoff_age_in_days: 31
+    broker_client_default_async_poll_interval_seconds: null
+    broker_client_max_async_poll_duration_minutes: null
+    broker_client_timeout_seconds: 70
+    buildpacks:
+      buildpack_directory_key: controller.ktds-paas.com-cc-buildpacks
+      cdn: null
+      fog_connection: null
+    bulk_api_password: admin
+    client_max_body_size: 15M
+    db_encryption_key: admin
+    db_logging_level: debug2
+    default_app_disk_in_mb: 1024
+    default_app_memory: 1024
+    default_buildpacks:
+    - name: staticfile_buildpack
+      package: buildpack_staticfile
+    - name: java_buildpack
+      package: buildpack_java
+    - name: ruby_buildpack
+      package: buildpack_ruby
+    - name: nodejs_buildpack
+      package: buildpack_nodejs
+    - name: go_buildpack
+      package: buildpack_go
+    - name: python_buildpack
+      package: buildpack_python
+    - name: php_buildpack
+      package: buildpack_php
+    - name: binary_buildpack
+      package: buildpack_binary
+    default_health_check_timeout: 60
+    default_quota_definition: default
+    default_running_security_groups:
+    - public_networks
+    - dns
+    default_staging_security_groups:
+    - public_networks
+    - dns
+    default_to_diego_backend: false
+    development_mode: false
+    directories: null
+    disable_custom_buildpacks: false
+    droplets:
+      cdn: null
+      droplet_directory_key: controller.ktds-paas.com-cc-droplets
+      fog_connection: null
+      max_staged_droplets_stored: null
+    external_host: api
+    external_port: 9022
+    external_protocol: null
+    install_buildpacks:
+    - name: staticfile_buildpack
+      package: buildpack_staticfile
+    - name: java_buildpack
+      package: buildpack_java
+    - name: ruby_buildpack
+      package: buildpack_ruby
+    - name: nodejs_buildpack
+      package: buildpack_nodejs
+    - name: go_buildpack
+      package: buildpack_go
+    - name: python_buildpack
+      package: buildpack_python
+    - name: php_buildpack
+      package: buildpack_php
+    - name: binary_buildpack
+      package: buildpack_binary
+    internal_api_password: admin
+    internal_api_user: internal_user
+    jobs:
+      app_bits_packer:
+        timeout_in_seconds: null
+      app_events_cleanup:
+        timeout_in_seconds: null
+      app_usage_events_cleanup:
+        timeout_in_seconds: null
+      blobstore_delete:
+        timeout_in_seconds: null
+      blobstore_upload:
+        timeout_in_seconds: null
+      droplet_deletion:
+        timeout_in_seconds: null
+      droplet_upload:
+        timeout_in_seconds: null
+      generic:
+        number_of_workers: null
+      global:
+        timeout_in_seconds: 14400
+      model_deletion:
+        timeout_in_seconds: null
+    logging_level: debug2
+    maximum_app_disk_in_mb: 2048
+    maximum_health_check_timeout: 180
+    min_cli_version: null
+    min_recommended_cli_version: null
+    newrelic:
+      capture_params: false
+      developer_mode: false
+      environment_name: null
+      license_key: null
+      monitor_mode: false
+      transaction_tracer:
+        enabled: true
+        record_sql: obfuscated
+    packages:
+      app_package_directory_key: controller.ktds.cloud.com-cc-packages
+      cdn: null
+      fog_connection: null
+      max_package_size: 1073741824
+      max_valid_packages_stored: null
+    quota_definitions:
+      default:
+        memory_limit: 10240
+        non_basic_services_allowed: true
+        total_routes: 1000
+        total_services: 100
+    resource_pool:
+      cdn: null
+      fog_connection: null
+      resource_directory_key: controller.ktds.cloud.com-cc-resources
+    security_group_definitions:
+    - name: public_networks
+      rules:
+      - destination: 0.0.0.0-9.255.255.255
+        protocol: all
+      - destination: 11.0.0.0-169.253.255.255
+        protocol: all
+      - destination: 169.255.0.0-172.15.255.255
+        protocol: all
+      - destination: 172.32.0.0-192.167.255.255
+        protocol: all
+      - destination: 192.169.0.0-255.255.255.255
+        protocol: all
+    - name: dns
+      rules:
+      - destination: 0.0.0.0/0
+        ports: "53"
+        protocol: tcp
+      - destination: 0.0.0.0/0
+        ports: "53"
+        protocol: udp
+    srv_api_uri: https://api.controller.ktds.cloud.com
+    stacks: null
+    staging_upload_password: admin
+    staging_upload_user: update
+    system_buildpacks:
+    - name: staticfile_buildpack
+      package: buildpack_staticfile
+    - name: java_buildpack
+      package: buildpack_java
+    - name: ruby_buildpack
+      package: buildpack_ruby
+    - name: nodejs_buildpack
+      package: buildpack_nodejs
+    - name: go_buildpack
+      package: buildpack_go
+    - name: python_buildpack
+      package: buildpack_python
+    - name: php_buildpack
+      package: buildpack_php
+    - name: binary_buildpack
+      package: buildpack_binary
+    thresholds:
+      api:
+        alert_if_above_mb: null
+        restart_if_above_mb: null
+        restart_if_consistently_above_mb: null
+      worker:
+        alert_if_above_mb: null
+        restart_if_above_mb: null
+        restart_if_consistently_above_mb: null
+    user_buildpacks: []
+    users_can_select_backend: true
+  ccdb:
+    address: 10.10.5.44
+    databases:
+    - name: ccdb
+      tag: cc
+    db_scheme: postgres
+    port: 5524
+    roles:
+    - name: ccadmin
+      password: admin
+      tag: admin
+  collector: null
+  consul:
+    agent:
+      log_level: null
+      servers:
+        lan:
+        - 10.10.5.52
+    agent_cert: |+
+      -----BEGIN CERTIFICATE-----
+      MIIEITCCAgugAwIBAgIQTDMCJHBiQrY8hlM78doHTzALBgkqhkiG9w0BAQswEzER
+      MA8GA1UEAxMIY29uc3VsQ0EwHhcNMTUwODA4MDAxMTM3WhcNMTcwODA4MDAxMTM4
+      WjAXMRUwEwYDVQQDEwxjb25zdWwgYWdlbnQwggEiMA0GCSqGSIb3DQEBAQUAA4IB
+      DwAwggEKAoIBAQC9ybg/ARaW53ItlhLQlEobtzqjCgMchq6G8T8+Y6nV8lTFB9+E
+      AJyQbNz0OATZO09Ezexijict4YL9Ux0oekQ8n9EjoNFcF0VBqa9Iy137cevY97hh
+      Em8a6w5aepyaoh9YcWXGnp4uJ+xf4tzQUQCkb0QuedqSobJhPOrCCRyfL4KuHX0j
+      caJD7MDDX3brlxYLJAKTdaV9xWpLVE/9MMrTQnaZoiJOqoyDMc3scs4gkZ0ohM0R
+      yyFHPp3AC9Y0bZNcpitDYNzRFFvrPzNZTUrM0ar8kwI+Xt7Pbpc47v8xxVAQswXM
+      wPg+1yd9Jr7N3belToFZCvIJeI4vDF97MAM7AgMBAAGjcTBvMA4GA1UdDwEB/wQE
+      AwIAuDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwHQYDVR0OBBYEFC/B
+      5cFoXH/8xxXZ+Z4aJrqKNT0fMB8GA1UdIwQYMBaAFB/z3N26B7azE3kVUt5DNgeu
+      nDonMAsGCSqGSIb3DQEBCwOCAgEAM5mUgC45Mz17CGxP64cm/CVuHLMEsBThufYH
+      FlVk/NOi2fRTxEYzD1kx7lEk1T8D+cktpcLhU7AdHt8ckYfbpkOCfU27Pnql006h
+      tHGGut5K8mfLk/8/qwx99c1J9IE1lgWxPpzVylI8QSG/NkDis3ZUqlv4R0YqSVIs
+      a+NLjWbVHwRRPtUtlOh8aPlWbV9JlM7HWGJwA1K+lz3cG22hxw/lhS+gNkBdV4Ce
+      waTTjKU6c5/Y+7TU00wBy0TFfg0M5ZxnzzJaxSG7bOvy/OYPeIDGsSu4P8BWkJzb
+      wdfyYn+PzIEH49QQJpaExVy0SmMTwh9pVvQImBkexN0e+3PnynDq/GWu+vdBBAHr
+      8IPTVyxwZI1xwLV6LQsX2sMvxYnQTVxxv3/spNbzhmF2Pf0/XKVOawzqOUqSAXc/
+      0uSF9j5EhFFF9azqfdffzqju3q3/4npJn8XKgN6Ve071Li46h+0A+Y+FRdd0zMMj
+      qJd8kgL/rTWPINp0eI47RHW6xMIiZikeeT3BTlO4eSLOc/bUG+oAkfaFNTXBneDX
+      K0+CThR8fyn4ukW3jgAmwx2xmzn2uQvWKxPc3IpofDxNes2DP2J+/1p4jyoveOzp
+      6lwqqBsBz3E/z7sAqPOho4W1iI3o3BmzWhzAfEYuvHlSaZ8Ju74hDuh2pMnMCITB
+      ZjkHgOE=
+      -----END CERTIFICATE-----
+    agent_key: |+
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEAvcm4PwEWludyLZYS0JRKG7c6owoDHIauhvE/PmOp1fJUxQff
+      hACckGzc9DgE2TtPRM3sYo4nLeGC/VMdKHpEPJ/RI6DRXBdFQamvSMtd+3Hr2Pe4
+      YRJvGusOWnqcmqIfWHFlxp6eLifsX+Lc0FEApG9ELnnakqGyYTzqwgkcny+Crh19
+      I3GiQ+zAw19265cWCyQCk3WlfcVqS1RP/TDK00J2maIiTqqMgzHN7HLOIJGdKITN
+      EcshRz6dwAvWNG2TXKYrQ2Dc0RRb6z8zWU1KzNGq/JMCPl7ez26XOO7/McVQELMF
+      zMD4PtcnfSa+zd23pU6BWQryCXiOLwxfezADOwIDAQABAoIBAGQNkjp04mnPvlvW
+      ADlB1Afkgt8tChLh1eSCDmtfs0t9I79ztRwsDl39ZkbBuZykLdgCD5qtgm4nsxzF
+      0ltiidLEFkeIIpdAFVzWjff8bqF+n22UuvlB9JzmSnzcou7KhWfk8FjTimSe23h5
+      axvPeF0342P1DYu7/wRQTxrYHuS0BvCmDPZ07wzFJbOqx6gHM1oAoN3ICTswlKxU
+      a8L0nDkeTtjDwBvoStdpY7+3xUu6zvLxCuLn9bAQjJQVd5Qs5599VNIY055GSJxs
+      0T/p05+ViZWJt4ezUka+7uaKc1ApIA9uLwPiDYlzYNQPgvNpJklb0jw8y/NNaFYl
+      GZrS0GECgYEA+1fSkOQvQPR5ZkKHJ24mLHIyN5hopySrEm8mUSPyBgvAMIN8aIFl
+      c1UsecVAbT7C57lo8Kg51GyTcRcOFegce8K2g60n5VZRqwIKZ5QFKGcnbbmHlrk6
+      U6PCL1sVydKMK86lXWHigRMkPX9THewn5fimTVpDtSiWKXosSE0pL0kCgYEAwU3t
+      ZwE6MFXdpb+o2ZVO7AxqRAjt+DvG/Jyzi2mUm2Q/IPEf9GYrojMK843SmFa+hW/R
+      +WYfjyeXxX/pjiNaajcC9i0/IjHhghtjUMgPTnk3tWg+6JFoGqYOMxmD1jL8JQJ6
+      Q4dMiAJF0FBtA3OWt0rsnHCYnZKGk6+49IS66mMCgYEAr3/eHp/GQwOxtO6lMqod
+      65D9cYZxJKxc621DAwsnVoNj+jwFZW9cqFCD0q8h0mYtb+It3USJxMLfnOqtQiyl
+      nuER0hXZMrC4K8EsBLD9fP2yMVKH032YtYg18h0WtKrYh0oue2r63ofAGVTLc6xP
+      G6woawCpIFirqWCOhRmjtUkCgYB41wdGshy3JKZnvDWIt27b3zL7Dv38hRnyxt7y
+      kvEEZxmTtUi9lrVGM1RwRsNU2j1F205O80ldS2n0W+8cHPujlHo0fLqP3NDVbdub
+      H0V6UArES8OvzV5f8ljEFvo0iDDZzf+ygT0VdR5BiFVtp++a66qYbUbqkjOw1VPw
+      /5x9cwKBgQC69SK7iEZZs3v/wgS/wycxXeJ1KV17wvez3D8XjodO37wh+VrTU5Vi
+      FswLS6coxP5optNulBjEogYA4FV6RW1KpJtzOK9pYbYquYZ7s7jJob99FAG/S4w+
+      32Mj4ovtRtbWPQdq5SNnSWOrp92FSXSZAWTIpGAZC2jaNg6ofV/XNw==
+      -----END RSA PRIVATE KEY-----
+    ca_cert: |+
+      -----BEGIN CERTIFICATE-----
+      MIIFAzCCAu2gAwIBAgIBATALBgkqhkiG9w0BAQswEzERMA8GA1UEAxMIY29uc3Vs
+      Q0EwHhcNMTUwODA4MDAxMTI4WhcNMjUwODA4MDAxMTM0WjATMREwDwYDVQQDEwhj
+      b25zdWxDQTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMzjDTn+WDVK
+      AJ6H+8T2krtyzoMBTwEzGcG9UojDfvgdkbht1jLmbyPRJ06k6qc4q08ppdqDDCTg
+      OKnfib1vB839+gqMQjor+66rMMgazwwzlfcm2gCKYNbkuHe8iUYQpyBjJNMF6O6r
+      tHcxW8ETqO8tbXODBEKOxKzjTylCGl41+tRt4fG8mreCs8go7IHmughkQaxck5gc
+      kNy0LVIYiM5UlpTGQJHJzCkT2jCaqV665VHDlFY/X5UXNOEGDjx7UA2NIE9zCVD3
+      g2HBNxB+kPyvpXGWGz6X+fqJkHXe5xhMMKv9Omf3xZNd+7o+nWD0EDz2sHdnH60C
+      lQE+eM9ZhtQmII3MF7AskiKF3x2W+u87W0woJf5xgTVT+7PZRyb25r+g8unCJdRv
+      XZnO4g6rM5yAZtyh3DqepiRFrwvuOWUsbGdGZmv1jL07xL1uNIvJtwXlwIKwKeab
+      OK0PMrrehxcmMJqp+Osoy+YwlSSG54u/VKFsI28W1kL68GEkV3oevlb0hIRIPajT
+      YCIl266Zdo4sO7lmEJysDBi5p0zBz+erOmNhpxm1UsUssZrYaHnVLiodnc2jx4hB
+      0HhiU78Dt7B+jyuc9D3C91wellcgOgLfluQgvPS+n0/EopfLGG4RDDsASe+hqUWH
+      ExxZBac1DPqLhywmb2zRJijXwiiBD/CJAgMBAAGjZjBkMA4GA1UdDwEB/wQEAwIA
+      BjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBQf89zduge2sxN5FVLeQzYH
+      rpw6JzAfBgNVHSMEGDAWgBQf89zduge2sxN5FVLeQzYHrpw6JzALBgkqhkiG9w0B
+      AQsDggIBAIdodeDVVF+HZXH5mmhuxmdg0RCU6pnvYODPKhwZiIT9lEHmFlexaF85
+      UYvh5z3DL1beisH1yfrN/7z+535nPyIVJUHPHziaKCPed5au4LiHWeRBd/O0kj4W
+      P+GIBRJvAvShWQuQT30hlzh3ZAdTRVNNrKY4UMRclZbTv2dBT7IdlN/FsqHp1GbK
+      bGHQH5/AneF/vttjRiaMJZFrHq3Aw0wntzRCAIIfVZo5r93KGiGUFWXQKdMyoOYD
+      R04DQPzu/otY0hqUPuzMqPU5xYJzLopOtfKpQtnhpB/yNbyjmAh3795zWb51Gead
+      cO6BfaCpzR0vA0SkfTBMhqmvc0AUvoGOqh3tNibFkVBo17KTEWphyIl2+61s/a7N
+      22xgQZIrwyMWXL6Mr4ZHloryJ1Nu5iFUHfT8ATYtqNotGATEV+oi03xACSzqAboE
+      rmGwMRNJAtWbeTqhS6bFqQAkAmvpZBO+h3LkoAixcCIoNXWJA9+pDptIRU48Av2u
+      /DkAOjhNh2MJkQs8owhAvxKsT1BwsPlc71tGzFLEbOJkGwt+RtzqjWc6Nq+l+uup
+      sD0sQMSg/b/b60OtJ/Qm5+u42kDaQi3v9+92S/bs9fTzA25c/mr8KA6dvG4LAsJU
+      /QlnEFyH789135x864ym1G2fvaPTqcgIc7jfw3tMTs5TtP/VSTn0
+      -----END CERTIFICATE-----
+    encrypt_keys: 
+    - Atzo3VBv+YVDzQAzlQRPRA==
+    require_ssl: true
+    server_cert: |+
+      -----BEGIN CERTIFICATE-----
+      MIIELDCCAhagAwIBAgIRAN0EJexxqEEyVatWrjzc7zAwCwYJKoZIhvcNAQELMBMx
+      ETAPBgNVBAMTCGNvbnN1bENBMB4XDTE1MDgwODAwMTEzNloXDTE3MDgwODAwMTEz
+      NlowITEfMB0GA1UEAxMWc2VydmVyLmRjMS5jZi5pbnRlcm5hbDCCASIwDQYJKoZI
+      hvcNAQEBBQADggEPADCCAQoCggEBAMnlRbL6VBmDhSqCzVfez1yJsntK1YD1pdbP
+      LBgdfqxKEJv3p6w1FJH/TFpbKQU2HGvGgeCooUcO2fo0pkW8nDp9xASG3eMeL7pG
+      aTSYrlCGD9jmGn7ENLOke6J+S3gjlf3Y029RchPNfUH6PnFQeSnYPmhSgTbeMVBm
+      02aN4KfOuGUiC3ivjaY3RrhcvybWGNhp8PK+hUYWnN8e6lyPDTo6kSgtapiSfCa3
+      32pZITRnQDs/1Y0es5Gjou/7Kh40cKf4pA38xlu8TIxpfsxzlnMbW4mNvP6cdoFg
+      HUhT/uZhYIX0jEqEUSOM/zjj08HFAYYJTTQ7qovY/6z8WXeQR8kCAwEAAaNxMG8w
+      DgYDVR0PAQH/BAQDAgC4MB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAd
+      BgNVHQ4EFgQUp59BTY2TSXRJ0GNzVmkUE14j5hgwHwYDVR0jBBgwFoAUH/Pc3boH
+      trMTeRVS3kM2B66cOicwCwYJKoZIhvcNAQELA4ICAQBC37sEtmLj/qS7Q3RIezTc
+      hs3EZJweWNN5vjEWAYVf9g4pq/f39hmMF9rqXugBxm8WgQRCGxDLzMr5IEX1fOcI
+      Ksz98rUfWtS8WxuqFOihnZQmSj9KQmHvOCtgs/zIMW55AEPcdpVtZvl2Y2z9+j68
+      K6Z2cfgZFC8OPkk4Kfvdj3o+wWfMlnaGrwSansmuRNupXGexwQ01L1qClXxDJc/c
+      zGetvKs67HsOdSeuza2Y7D/OJUWdcyaGM7cqfs2MPoLiyAydQRGtXjCsH4mUjzKZ
+      wZ9Rq72y4jmK/Stc40TpBDnav486PZtlap/F6rUhgKKJ3UPH3fBXkIDXtRhztcQa
+      y670ZyTgFWn5mUYLB3Z66YMYqAIIJBX2cbwObbrLH1eI3Qtuh/rcCSms9XXz3jHu
+      R6+saTPl3UWw2hrHc8MAuDSTa/Qsej8TMxigju9bZxxtIY0+sUbz436Yg1I43HzR
+      /wIj682hruww4hwT7lQJUw8Zp0QQA2hfhfr4kPJGIz9+96cGT1LWiEwSuptcwYPw
+      WV4VuQJccQN4yQYR1Qp1jepEBs7NuIX46VgSU55BKSsQf1zUqP6A3G9D0nnMtACO
+      WpO0sgj3uHHCsNTC0DwR7TM5dByZWzJK0lQJCG6HzHkLcvovq/9uhn8dqOlpzeti
+      amuBD7LTPTc3rnu4GL7aZA==
+      -----END CERTIFICATE-----
+    server_key: |+
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEogIBAAKCAQEAyeVFsvpUGYOFKoLNV97PXImye0rVgPWl1s8sGB1+rEoQm/en
+      rDUUkf9MWlspBTYca8aB4KihRw7Z+jSmRbycOn3EBIbd4x4vukZpNJiuUIYP2OYa
+      fsQ0s6R7on5LeCOV/djTb1FyE819Qfo+cVB5Kdg+aFKBNt4xUGbTZo3gp864ZSIL
+      eK+NpjdGuFy/JtYY2Gnw8r6FRhac3x7qXI8NOjqRKC1qmJJ8JrffalkhNGdAOz/V
+      jR6zkaOi7/sqHjRwp/ikDfzGW7xMjGl+zHOWcxtbiY28/px2gWAdSFP+5mFghfSM
+      SoRRI4z/OOPTwcUBhglNNDuqi9j/rPxZd5BHyQIDAQABAoIBADcgwopfbi1VSzxT
+      YQyYS1jCRJkD0w6WhMUF5s1i6F7VDnn4ArG0ALzo0AlwEOBaaSJIntggU4FancyD
+      Kc+q86HJC4gM53OHn5KmfT2eXyKfqJ4aHqv0mUtgI144TBUu6lrZJMqlm5eqqYQl
+      d31rctopMMk9lgjMXPzORvUe0nQfMuD24y0vv+l8/O8Ib5mIzI8bBor7d+TNbF+W
+      1vXqlZ/NEpqrI/yyacJDFQC0yhDAbEC5SMiYumf7Vc9jJtBKDk2YCIvHpSjKdaIG
+      MUa8JG6A8cpWhSdpP1GO6LnMFloC7LdioGaXLEJeUkWnbhGQ/VuDfqogBM/4lLIt
+      IjDVEI0CgYEA639Ya/pgUe8kVl0mR/wuDI+EENWeJiLbumLpDhTFdiGXSl9ZIYez
+      GAyR23rJOU2zGoIt4IRxxVq6QLPFq0ZTKoq1kGqyAqAc0GenKgU+Uq6Mc3E0A9MG
+      z/+tBCoc9ZtC4+u/q9VdMAu/W4xJ7mtwVFItX115FsYUYw6p3hXsz/cCgYEA23kG
+      YI/KxpAFW1V04urY8YUsdvPiDtJbA0JiQeWoNRUjIoJOUVY/2P+ZdVcCaWcXEi3l
+      mjHPsXoNR5ZzHxbP/5tN8m/jl8tAD17is1qfPR7oUBfjZOHY7xFamWMK0Lo2hi7H
+      xT7BJXLOwqV3hfYcJ+x51R/H3wjpyF5g1vAtNj8CgYA9ZV/qFsaR1eUFVxep4Mco
+      oyntMaQfkSrz9uGHuEaau7szupQEN9qrRGuqauKXO/ibyqCnTiBTMYopYDUCqDz6
+      dFtNoWNzZ8bbVoqwW9mZuMQJPNQwww2doKy8zzXpmmbgARBhfijjY8yp03Na40vP
+      z/TgTgBJva6G/MWwjsrElQKBgCi6guZ0iMrkezoB19ksf+oCLsg8Zh0eCGnIbfeQ
+      qPCA5a5HxETv3pVkiZPu+7GXwf5Lqio9SC/FWKWKU/7W+u6SYZq2DORkgZTYpPVn
+      wdlT3QTQChD0oI9tBwUkDiPCCtBH6ia+iJVsgtY4Yr/ndj4qckmMxkirnMbkTNBW
+      be19AoGAelJR7jzk6TLw6ZGbGXsAQSAcP5IUM7GHAPo26ywIOTe8p40hmKrVnxfY
+      EroZtdjv1A9NVpCHJM7a/3nl0aALEsn3JKYEuG4HCY/oJ7rPpJItfrJ3MUTn/uqD
+      BKcJHlf9kYxFaLL17iOq9rY0+LURr63BkRa2uyn489luxcHnTjk=
+      -----END RSA PRIVATE KEY-----
+  databases:
+    address: 10.10.5.44
+    collect_statement_statistics: null
+    databases:
+    - citext: true
+      name: ccdb
+      tag: cc
+    - citext: true
+      name: uaadb
+      tag: uaa
+    db_scheme: postgres
+    port: 5524
+    roles:
+    - name: ccadmin
+      password: admin
+      tag: admin
+    - name: uaaadmin
+      password: admin
+      tag: admin
+  dea_next:
+    advertise_interval_in_seconds: 5
+    allow_host_access: null
+    allow_networks: null
+    default_health_check_timeout: 60
+    deny_networks: null
+    directory_server_protocol: https
+    disk_mb: 2048
+    disk_overcommit_factor: null
+    evacuation_bail_out_time_in_seconds: 600
+    heartbeat_interval_in_seconds: 10
+    instance_disk_inode_limit: 200000
+    kernel_network_tuning_enabled: true
+    logging_level: debug
+    memory_mb: 1024
+    memory_overcommit_factor: null
+    mtu: null
+    rlimit_core: 0
+    staging_disk_inode_limit: 200000
+    staging_disk_limit_mb: 6144
+    staging_memory_limit_mb: 1024
+  description: null
+  disk_quota_enabled: true
+  domain: controller.ktds.cloud.com
+  doppler:
+    blacklisted_syslog_ranges: null
+    debug: false
+    enable_tls_transport: null
+    maxRetainedLogMessages: 100
+    port: 4443
+    tls_server:
+      cert: null
+      key: null
+      port: null
+    unmarshaller_count: 5
+  doppler_endpoint:
+    shared_secret: admin
+  dropsonde:
+    enabled: true
+  etcd:
+    machines:
+    - 10.10.5.48
+    peer_require_ssl: false
+    require_ssl: false
+  etcd_metrics_server:
+    nats:
+      machines:
+      - 10.10.5.42
+      password: admin
+      username: nats
+  ha_proxy: null
+  hm9000:
+    url: https://hm9000.controller.ktds.cloud.com
+  logger_endpoint:
+    port: 4443
+  loggregator:
+    blacklisted_syslog_ranges: null
+    debug: false
+    etcd:
+      machines:
+      - 10.10.5.48
+    maxRetainedLogMessages: 100
+    outgoing_dropsonde_port: 8081
+    tls:
+      ca: null
+  loggregator_endpoint:
+    shared_secret: admin
+  login:
+    analytics:
+      code: null
+      domain: null
+    asset_base_url: null
+    brand: oss
+    catalina_opts: null
+    enabled: true
+    invitations_enabled: null
+    links:
+      passwd: https://console.controller.ktds.cloud.com/password_resets/new
+      signup: https://console.controller.ktds.cloud.com/register
+    logout:
+      redirect:
+        url: /login?template=openstack
+    messages: null
+    notifications:
+      url: null
+    protocol: null
+    restricted_ips_regex: null
+    saml: null
+    self_service_links_enabled: null
+    signups_enabled: null
+    smtp:
+      host: null
+      password: null
+      port: null
+      user: null
+    spring_profiles: null
+    tiles: null
+    uaa_base: null
+    url: null
+  metron_agent:
+    deployment: env
+    preferred_protocol: null
+    tls_client:
+      cert: null
+      key: null
+  metron_endpoint:
+    shared_secret: admin
+  nats:
+    address: 10.10.5.42
+    debug: false
+    machines:
+    - 10.10.5.42
+    monitor_port: 0
+    password: admin
+    port: 4222
+    prof_port: 0
+    trace: false
+    user: nats
+  nfs_server:
+    address: 10.10.5.43
+    allow_from_entries:
+    - 10.10.5.0/24
+    - 10.10.6.0/24
+    share: null
+  request_timeout_in_seconds: 900
+  router:
+    cipher_suites: TLS_RSA_WITH_RC4_128_SHA:TLS_RSA_WITH_AES_128_CBC_SHA
+    debug_addr: null
+    enable_ssl: true
+    extra_headers_to_log: null
+    logrotate:
+      freq_min: 20
+      rotate: 5
+      size: 3M
+    port: null
+    requested_route_registration_interval_in_seconds: null
+    route_service_timeout: null
+    route_services_secret: null
+    route_services_secret_decrypt_only: null
+    secure_cookies: null
+    ssl_cert: |+
+      -----BEGIN CERTIFICATE-----
+      MIIDmDCCAoACCQD8mbiHIO6CkDANBgkqhkiG9w0BAQsFADCBjDELMAkGA1UEBhMC
+      S1IxDjAMBgNVBAgMBVNlb3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARr
+      dGRzMQ4wDAYDVQQLDAVjbG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEh
+      MB8GCSqGSIb3DQEJARYSamluLXN1Lm1vb25Aa3QuY29tMCAXDTE1MTAyOTA1MTcy
+      MVoYDzIxMTUxMDA1MDUxNzIxWjCBjDELMAkGA1UEBhMCS1IxDjAMBgNVBAgMBVNl
+      b3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARrdGRzMQ4wDAYDVQQLDAVj
+      bG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEhMB8GCSqGSIb3DQEJARYS
+      amluLXN1Lm1vb25Aa3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+      AQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorUJE9OU7HpFUec
+      NGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7htRs87I6YH/bmZ
+      EU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE15iq3do0JB8Vf
+      zxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN0EZEu4kDiREp
+      C3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tjndiwf1P5vTw/
+      6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQDSaeE/
+      4pdTGCLQHvtODDlJuOd/z2d+jStHB4RR2iNgS9dhzaPzrg3+DeMkNFj+pwNmcBn5
+      pvtaYn37lAjfm0jA72T0z1u1+i24xKuXnBM5/eN5g94ZuRCdXiwpJXtDai/LJRox
+      0Zw3jBvdiwZqo9pKjraySQdcSNiaIxRkZFefIezGw4LQ9mROkuGVQCVlVATVDNwr
+      C4uVkdl/Csl1VSbE6jKiSl/Hg6JgtJnEK+Z+cyVQZH+iaU1UI6hGo6VMsYCB5ObP
+      9JM4UbUTVIDWPXgq8k+29avGpWlvIoWlp5xI/m/NPTZXjj9JuqM7mw0yX6PkLMQp
+      spNcm1KYtyXOmWvV
+      -----END CERTIFICATE-----
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorU
+      JE9OU7HpFUecNGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7ht
+      Rs87I6YH/bmZEU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE1
+      5iq3do0JB8VfzxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN
+      0EZEu4kDiREpC3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tj
+      ndiwf1P5vTw/6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABAoIBAET0wuNxP66MPvY3
+      WojvDc7mPYGXJjB/qAmb0rd6uHCkWtdTFo2qVoRA87Kc+RQ6XZKBjQUrJ1ChHBBE
+      mTqhrf0fqCo5pNJblhkeBkG12yCfY5PEmJapMdnvnCgwkpBmwZPr4wOVJLGVKPx4
+      lcmHbGh3mDbxuGVonVtdBivnhXmKdKTsodtSIcWkaCFU4/3+FJQzgkPGgXaxdhIv
+      Eqvd+DaCHnAMxk206o5BEdIl0X18cN3GTS1R901mMl+dzv/PBNtSiZ0rstdek1ma
+      XwPE+Zo/vDWWBDnU2989PFJqaV8AzOrN46moByHG07frc2GsF6D2CYCJLDbBHC+x
+      Aak8MpECgYEA/szekTbNXzfZ6VxzUoyC4f3asfa74+mimzBLqeMzsxgr2+Vwz6/P
+      rAIwbjYD9rno+xGHwjA9wuId14ZuaTQKIhHePhMlGK9amohahEPeYNwohB9uskUO
+      bYvCsjZwybhe9V409W9ct2HDmo24Bro27iXBudxblJQeMxci7zwNQaUCgYEA13aP
+      TrZi7oibgqHLyRLJu67WXrq62QAM1ruYavLd9Cvay1ap25RptKoyLC4ORz8FuwhC
+      PYXHdTwnTWuVDQMIRR/fh/IYS6TV3UM2hQmTdpdVTO+MKXC9guEGksY/m2kYc0E2
+      +gmnkEdLLnlma4ou35WeU3Uth7i9HKqs/N9YPcUCgYEAymk5TaZ5U3Ds3SMiQat5
+      tcmR19onvJA3Ko0dLmJdCaLkBJWqHnKNyRkcHBEw6OkbGYf9jtf/2DcEedhDEbPT
+      cOk84ZcX2xpCIYy8S2IW4F9EmGDX8SpGoeNq0WPKCZU7ajRiYa8Lumohlz+Jt15q
+      kJjR4rIY1lkr/G4exGmyJjkCgYEAy8/JpZJfKPYt7DbyVsSf8Rpki30lC+nBO0p+
+      1gPgsnzdXWUgDaZpC03HYgU62mgiGpaoWhv23c3F+7UdbA6HPyP0RVtbYgqNhtxy
+      cQvq4s4qETmzouuTSH9lwWcoefDDARsaTxDc4VyfIFoT6PvwdOzJtHZuWCkHMlu8
+      gQMgLGUCgYAnXdI7V6yagCdnBfZjn0i5943OG9PrrLumnynre6HHf4RcyGioiGqg
+      YHBxaxlChEts6H6RcQ0Q5yVFoCVtg4lZzb7mzhTf3Q/OuIVbjib40lfwDHIBMA7T
+      AOfWY90ipsDk2xGkwuJwPmDaE8rHxYWMJJDWR0eBUqcGGfl9Jn5A0w==
+      -----END RSA PRIVATE KEY-----
+    ssl_key: null
+    ssl_skip_validation: null
+    status:
+      password: admin
+      port: null
+      user: router_user
+  smoke_tests: null
+  ssl:
+    skip_cert_verify: false
+  support_address: http://support.cloudfoundry.com
+  syslog_daemon_config: null
+  system_domain: controller.ktds.cloud.com
+  system_domain_organization: null
+  traffic_controller:
+    outgoing_port: 8080
+  uaa:
+    admin:
+      client_secret: admin
+    authentication:
+      policy:
+        countFailuresWithinSeconds: null
+        lockoutAfterFailures: null
+        lockoutPeriodSeconds: null
+    catalina_opts: -Xmx768m -XX:MaxPermSize=256m
+    cc:
+      client_secret: admin
+    clients:
+      app-direct:
+        secret: admin
+      cc_routing:
+        authorities: routing.router_groups.read
+        authorized-grant-types: client_credentials
+        secret: admin
+      cloud_controller_username_lookup:
+        authorities: scim.userids
+        authorized-grant-types: client_credentials
+        secret: cloud_controller_username_lookup_secret
+      developer_console:
+        secret: admin
+      doppler:
+        authorities: uaa.resource
+        override: true
+        secret: admin
+      gorouter:
+        authorities: clients.read,clients.write,clients.admin,routing.routes.write,routing.routes.read
+        authorized-grant-types: client_credentials,refresh_token
+        scope: openid,cloud_controller_service_permissions.read
+        secret: admin
+      login:
+        authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
+        authorized-grant-types: authorization_code,client_credentials,refresh_token
+        override: true
+        redirect-uri: https://login.controller.ktds.cloud.com
+        scope: openid,oauth.approvals
+        secret: admin
+      notifications:
+        authorities: cloud_controller.admin,scim.read
+        authorized-grant-types: client_credentials
+        secret: admin
+    database:
+      abandoned_timeout: 600
+      log_abandoned: true
+      max_connections: 100
+      max_idle_connections: 10
+      remove_abandoned: true
+    issuer: https://uaa.controller.ktds.cloud.com
+    jwt:
+      signing_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIICXAIBAAKBgQDHFr+KICms+tuT1OXJwhCUmR2dKVy7psa8xzElSyzqx7oJyfJ1
+        JZyOzToj9T5SfTIq396agbHJWVfYphNahvZ/7uMXqHxf+ZH9BL1gk9Y6kCnbM5R6
+        0gfwjyW1/dQPjOzn9N394zd2FJoFHwdq9Qs0wBugspULZVNRxq7veq/fzwIDAQAB
+        AoGBAJ8dRTQFhIllbHx4GLbpTQsWXJ6w4hZvskJKCLM/o8R4n+0W45pQ1xEiYKdA
+        Z/DRcnjltylRImBD8XuLL8iYOQSZXNMb1h3g5/UGbUXLmCgQLOUUlnYt34QOQm+0
+        KvUqfMSFBbKMsYBAoQmNdTHBaz3dZa8ON9hh/f5TT8u0OWNRAkEA5opzsIXv+52J
+        duc1VGyX3SwlxiE2dStW8wZqGiuLH142n6MKnkLU4ctNLiclw6BZePXFZYIK+AkE
+        xQ+k16je5QJBAN0TIKMPWIbbHVr5rkdUqOyezlFFWYOwnMmw/BKa1d3zp54VP/P8
+        +5aQ2d4sMoKEOfdWH7UqMe3FszfYFvSu5KMCQFMYeFaaEEP7Jn8rGzfQ5HQd44ek
+        lQJqmq6CE2BXbY/i34FuvPcKU70HEEygY6Y9d8J3o6zQ0K9SYNu+pcXt4lkCQA3h
+        jJQQe5uEGJTExqed7jllQ0khFJzLMx0K6tj0NeeIzAaGCQz13oo2sCdeGRHO4aDh
+        HH6Qlq/6UOV5wP8+GAcCQFgRCcB+hrje8hfEEefHcFpyKH+5g1Eu1k0mLrxK2zd+
+        4SlotYRHgPCEubokb2S1zfZDWIXW3HmggnGgM949TlY=
+        -----END RSA PRIVATE KEY-----
+      verification_key: |
+        -----BEGIN PUBLIC KEY-----
+        MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHFr+KICms+tuT1OXJwhCUmR2d
+        KVy7psa8xzElSyzqx7oJyfJ1JZyOzToj9T5SfTIq396agbHJWVfYphNahvZ/7uMX
+        qHxf+ZH9BL1gk9Y6kCnbM5R60gfwjyW1/dQPjOzn9N394zd2FJoFHwdq9Qs0wBug
+        spULZVNRxq7veq/fzwIDAQAB
+        -----END PUBLIC KEY-----
+    ldap: null
+    login: null
+    newrelic: null
+    no_ssl: true
+    port: 8080
+    require_https: null
+    restricted_ips_regex: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}
+    scim:
+      external_groups: null
+      groups: additionalgroup1,additionalgroup2
+      userids_enabled: true
+      users:
+      - admin|fakepassword|scim.write,scim.read,openid,cloud_controller.admin,doppler.firehose
+    spring_profiles: null
+    url: https://uaa.controller.ktds.cloud.com
+    user: null
+    zones: null
+  uaadb:
+    address: 10.10.5.44
+    databases:
+    - name: uaadb
+      tag: uaa
+    db_scheme: postgresql
+    port: 5524
+    roles:
+    - name: uaaadmin
+      password: admin
+      tag: admin
+releases:
+- name: cf
+  version: latest
+resource_pools:
+- cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: small_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: small_z2
+  network: cf2
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.medium
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: medium_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.medium
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: medium_z2
+  network: cf2
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: large_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: large_z2
+  network: cf2
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: runner_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: runner_z2
+  network: cf2
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.medium
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: router_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.medium
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: router_z2
+  network: cf2
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: small_errand
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$BnHCNJA5DKKkSG$Z.3c2KDP8QfE42DXX8IPNkpU42kdxIvc0y6tbOwtOJw4uGBJOZEOY2dozjxWuZ7UnfCJJ6T2x.WsUlwupjPL/.
+  name: xlarge_errand
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  max_in_flight: 1
+  serial: true
+  update_watch_time: 5000-600000
+

@@ -1,0 +1,217 @@
+---
+director_uuid: DIRECTOR_UUID
+
+compilation:
+  workers: 4
+
+meta:
+  environment: cf-runtime-bb-1
+
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+
+  floating_static_ips:
+  - FLOATING_STATIC_IP
+
+networks:
+  - name: floating
+    type: vip
+    cloud_properties:
+      net_id: COMMON_NET_ID
+      security_groups: []
+  - name: cf1
+    type: manual
+    subnets:
+    - range: 10.230.5.0/24
+      gateway: 10.230.5.1
+      reserved:
+      - 10.230.5.2 - 10.230.5.135
+      - 10.230.5.175 - 10.230.5.254
+      dns:
+      - 8.8.8.8
+      static:
+      - 10.230.5.160 - 10.230.5.174
+      cloud_properties:
+        net_id: COMMON_NET_ID
+        security_groups: ["default", "runtime-bb-1-ssh", "runtime-bb-1-bosh", "runtime-bb-1-cf-private", "runtime-bb-1-cf-public"]
+  - name: cf2
+    type: manual
+    subnets: (( networks.cf1.subnets )) # cf2 unused in this environment, but spiff needs
+                                        # it to be a semi-valid value, so just copy cf1
+
+properties:
+  domain: runtime-bb-1.cf-app.com
+
+  cc:
+    staging_upload_user: staging_user
+    db_encryption_key: DB_ENCRYPTION_KEY
+    bulk_api_password: BULK_API_PASSWORD
+    staging_upload_password: STAGING_UPLOAD_PASSWORD
+    uaa_skip_ssl_validation: true
+
+    default_quota_definition: free
+    quota_definitions:
+      free:
+        memory_limit: 0
+        total_services: 10
+        total_routes: 1000
+        non_basic_services_allowed: false
+      paid:
+        memory_limit: 10240
+        total_services: -1
+        total_routes: 1000
+        non_basic_services_allowed: true
+      runaway:
+        memory_limit: 153600
+        total_services: -1
+        total_routes: 1000
+        non_basic_services_allowed: true
+      trial:
+        non_basic_services_allowed: false
+        total_services: 10
+        memory_limit: 2048
+        total_routes: 1000
+        trial_db_allowed: true
+
+  consul:
+    encrypt_keys: [CONSUL_ENCRYPT_KEY]
+    ca_cert: CONSUL_CA_CERT
+    server_cert: CONSUL_SERVER_CERT
+    server_key: CONSUL_SERVER_KEY
+    agent_cert: CONSUL_AGENT_CERT
+    agent_key: CONSUL_AGENT_KEY
+
+  uaa:
+    admin:
+      client_secret: UAA_ADMIN_CLIENT_SECRET
+    cc:
+      client_secret: UAA_CC_CLIENT_SECRET
+    clients:
+      doppler:
+        secret: UAA_DOPPLER_CLIENT_SECRET
+      login:
+        secret: UAA_LOGIN_CLIENT_SECRET
+      servicesmgmt:
+        secret: UAA_SERVICESMGMT_CLIENT_SECRET
+      space-mail:
+        secret: UAA_SPACEMAIL_CLIENT_SECRET
+      notifications:
+        secret: UAA_NOTIFICATIONS_CLIENT_SECRET
+      support-services:
+        secret: UAA_SUPPORT_CLIENT_SECRET
+      cloud_controller_username_lookup:
+        secret: UAA_LOOKUP_CLIENT_SECRET
+      cc_routing:
+        secret: UAA_CCROUTING_CLIENT_SECRET
+      gorouter:
+        secret: UAA_GOROUTER_CLIENT_SECRET
+      cc_service_broker_client:
+        authorities: clients.read,clients.write,clients.admin
+        authorized-grant-types: client_credentials
+        scope: cloud_controller.write,openid,cloud_controller.read,cloud_controller_service_permissions.read
+        secret: UAA_BROKER_CLIENT_SECRET
+    jwt:
+      signing_key: UAA_JWT_SIGNING_KEY
+     verification_key: UAA_JWT_VERIFICATION_KEY
+    scim:
+      users:
+        - admin|ADMIN_USER_PASSWORD|scim.write,scim.read,openid,cloud_controller.admin,doppler.firehose
+        - services|SERVICES_USER_PASSWORD|scim.write,scim.read,openid,cloud_controller.admin
+
+  ccdb:
+    roles:
+    - name: ccadmin
+      password: CCDB_PASSWORD
+  databases:
+    roles:
+    - name: ccadmin
+      password: CCDB_PASSWORD
+    - name: uaaadmin
+      password: UAADB_PASSWORD
+  loggregator_endpoint:
+    shared_secret: LOGGREGATOR_SHARED_SECRET
+
+  nats:
+    user: nats
+    password: NATS_PASSWORD
+  router:
+    status:
+      user: admin
+      password: ROUTER_STATUS_PASSWORD
+  dea_next:
+    evacuation_bail_out_time_in_seconds: 0
+    memory_mb: 8192
+    disk_mb: 16384
+    disk_overcommit_factor: 2
+    memory_overcommit_factor: 3
+  ssl:
+    skip_cert_verify: true
+  uaadb:
+    roles:
+    - name: uaaadmin
+      password: UAADB_PASSWORD
+  login:
+    protocol: http
+
+jobs:
+- name: ha_proxy_z1
+  instances: 1
+  networks:
+    - name: cf1
+      default:
+      - dns
+      - gateway
+  properties:
+    ha_proxy:
+      ssl_pem: |
+        -----BEGIN RSA PRIVATE KEY-----
+        INCLUDE BOTH THE KEY
+        -----END RSA PRIVATE KEY-----
+        -----BEGIN CERTIFICATE-----
+        AND THE CERT
+        -----END CERTIFICATE-----
+
+- name: router_z1
+  instances: 1
+
+- name: smoke_tests
+  instances: 1
+
+- name: loggregator_z1
+  instances: 1
+
+- name: loggregator_trafficcontroller_z1
+  instances: 1
+
+- name: etcd_z1
+  instances: 1
+
+- name: nats_z1
+  instances: 1
+
+- name: nfs_z1
+  instances: 1
+
+- name: postgres_z1
+  instances: 1
+
+- name: api_z1
+  instances: 1
+  templates:
+    - name: cloud_controller_ng
+    - name: cloud_controller_clock
+    - name: cloud_controller_worker
+    - name: metron_agent
+    - name: statsd-injector
+    - name: nfs_mounter
+    - name: route_registrar
+
+- name: runner_z1
+  instances: 1
+
+- name: api_worker_z1
+  instances: 0
+
+- name: clock_global
+  instances: 0
+

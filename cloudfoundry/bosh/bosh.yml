@@ -32,7 +32,6 @@ networks:
     cloud_properties: {net_id: 86d402c8-e10a-4854-8c43-bcb16acf2b9c} # <--- # Replace with private network UUID
 - name: public
   type: vip
-  vip: 10.13.32.77
  
 jobs:
 - name: bosh

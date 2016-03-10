@@ -1,0 +1,210 @@
+---
+name: bosh-openstack
+
+director_uuid: 4048d97d-f435-495a-9a70-33ca4dcd7e0e
+
+release:
+  name: bosh
+  version: latest
+
+compilation:
+  workers: 2
+  network: private
+  reuse_compilation_vms: false
+  cloud_properties:
+    instance_type: m1.small
+    availability_zone: nova
+
+update:
+  canaries: 1
+  canary_watch_time: 3000-120000
+  update_watch_time: 3000-120000
+  max_in_flight: 1
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: 192.168.1.0/24
+    gateway: 192.168.1.1
+    static:
+    - 192.168.1.11 - 192.168.1.99
+    reserved:
+    - 192.168.1.2 - 192.168.1.10
+    - 192.168.1.100 - 192.168.1.120
+    - 192.168.1.250 - 192.168.1.254
+    dns: [8.8.8.8]
+    cloud_properties: {net_id: db791934-bbba-4b75-bb20-219aa4b7430d}
+
+- name: floating
+  type: vip
+
+resource_pools:
+- name: common
+  network: private
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: m1.small
+    availability_zone: nova
+
+disk_pools:
+- name: disks
+  disk_size: 10_000
+
+jobs:
+  - name: nats
+    template: nats
+    instances: 1
+    resource_pool: common
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.51]
+ 
+  - name: redis
+    template: redis
+    instances: 1
+    resource_pool: common
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.52]
+ 
+  - name: postgres
+    template: postgres
+    instances: 1
+    resource_pool: common
+    persistent_disk: 4096
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.53]
+ 
+  - name: powerdns
+    template: powerdns
+    instances: 1
+    resource_pool: common
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.54]
+      - name: floating
+        static_ips:
+          - 14.63.202.132
+ 
+  - name: blobstore
+    template: blobstore
+    instances: 1
+    resource_pool: common
+    persistent_disk: 4096
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.55]
+ 
+  - name: director
+    template: director
+    instances: 1
+    resource_pool: common
+    persistent_disk: 4096
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.56]
+      - name: floating
+        static_ips:
+          - 14.63.202.142
+
+  - name: registry
+    template: registry
+    instances: 1
+    resource_pool: common
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.57]
+ 
+  - name: health_monitor
+    template: health_monitor
+    instances: 1
+    resource_pool: common
+    networks:
+      - name: private
+        default: [dns, gateway]
+        static_ips: [192.168.1.58]
+ 
+properties:
+  nats:
+    address: 192.168.1.51
+    user: nats
+    password: nats
+ 
+  redis:
+    listen_address: 0.0.0.0 
+    address: 192.168.1.52 
+    password: redis
+    port: 25255
+ 
+  postgres: &bosh_db
+    listen_address: 0.0.0.0
+    host: 192.168.1.53
+    port: 5432
+    user: postgres
+    password: postgres
+    database: bosh
+    adapter: postgres
+ 
+  dns:
+    address: 14.63.202.132
+    db: *bosh_db
+    recursor: 8.8.8.8
+ 
+  blobstore:
+    address: 192.168.1.55 
+    port: 25250
+    provider: dav
+    agent:
+      user: agent
+      password: agent
+    director:
+      user: admin
+      password: admin
+ 
+  director:
+    name: bosh
+    address: 192.168.1.56
+    db: *bosh_db
+    cpi_job: cpi
+    max_threads: 3
+ 
+  registry:
+    address: 192.168.1.57
+    host: 192.168.1.57
+    db: *bosh_db
+    http:
+      user: registry
+      password: registry
+      port: 25777
+    username: admin
+    password: admin
+ 
+  hm:
+    http:
+      user: admin
+      password: admin
+    director_account:
+      user: admin
+      password: admin
+    resurrector_enabled: true
+ 
+  ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+  openstack:
+    auth_url: http://14.63.202.11:5000/v2.0/tokens
+    username: pivotal
+    api_key: pivotalpass
+    tenant: pivotal
+    default_security_groups: [opsmanager]
+    default_key_name: joo

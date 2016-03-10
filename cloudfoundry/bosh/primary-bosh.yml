@@ -105,10 +105,15 @@ jobs:
         static_ips: [192.168.1.55]
  
   - name: director
-    template: director
     instances: 1
+
+    templates: 
+    - {name: director, release: bosh}
+    - {name: cpi, release: bosh}
+
     resource_pool: common
     persistent_disk: 4096
+
     networks:
       - name: private
         default: [dns, gateway]

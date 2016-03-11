@@ -8,7 +8,7 @@ release:
   version: latest
 
 compilation:
-  workers: 2
+  workers: 3
   network: private
   reuse_compilation_vms: false
   cloud_properties:
@@ -33,7 +33,7 @@ networks:
     - 192.168.1.2 - 192.168.1.10
     - 192.168.1.100 - 192.168.1.120
     - 192.168.1.250 - 192.168.1.254
-    dns: [8.8.8.8]
+    dns: [192.168.0.12, 8.8.8.8]
     cloud_properties: {net_id: db791934-bbba-4b75-bb20-219aa4b7430d}
 
 - name: floating
@@ -76,29 +76,29 @@ jobs:
     template: postgres
     instances: 1
     resource_pool: common
-    persistent_disk: 4096
+    persistent_disk: 2048
     networks:
       - name: private
         default: [dns, gateway]
         static_ips: [192.168.1.53]
  
-  - name: powerdns
-    template: powerdns
-    instances: 1
-    resource_pool: common
-    networks:
-      - name: private
-        default: [dns, gateway]
-        static_ips: [192.168.1.54]
-      - name: floating
-        static_ips:
-          - 14.63.202.132
+#  - name: powerdns
+#    template: powerdns
+#    instances: 1
+#    resource_pool: common
+#    networks:
+#      - name: private
+#        default: [dns, gateway]
+#        static_ips: [192.168.1.54]
+#      - name: floating
+#        static_ips:
+#          - 14.63.202.132
  
   - name: blobstore
     template: blobstore
     instances: 1
     resource_pool: common
-    persistent_disk: 4096
+    persistent_disk: 2048
     networks:
       - name: private
         default: [dns, gateway]
@@ -112,7 +112,7 @@ jobs:
     - {name: cpi, release: bosh}
 
     resource_pool: common
-    persistent_disk: 4096
+    persistent_disk: 2048
 
     networks:
       - name: private
@@ -143,13 +143,14 @@ jobs:
 properties:
   nats:
     address: 192.168.1.51
+    port: 4222
     user: nats
-    password: nats
+    password: nats-password
  
   redis:
     listen_address: 0.0.0.0 
     address: 192.168.1.52 
-    password: redis
+    password: redis-password
     port: 25255
  
   postgres: &bosh_db
@@ -157,14 +158,14 @@ properties:
     host: 192.168.1.53
     port: 5432
     user: postgres
-    password: postgres
+    password: postgres-password
     database: bosh
     adapter: postgres
  
-  dns:
-    address: 14.63.202.132
-    db: *bosh_db
-    recursor: 8.8.8.8
+#  dns:
+#    address: 14.63.202.132
+#    db: *bosh_db
+#    recursor: 8.8.8.8
  
   blobstore:
     address: 192.168.1.55 
@@ -172,7 +173,7 @@ properties:
     provider: dav
     agent:
       user: agent
-      password: agent
+      password: agent-password
     director:
       user: admin
       password: admin
@@ -189,16 +190,16 @@ properties:
     host: 192.168.1.57
     db: *bosh_db
     http:
-      user: registry
-      password: registry
+      user: admin
+      password: admin
       port: 25777
     username: admin
     password: admin
+    port: 25777
  
   hm:
     http:
-      user: admin
-      password: admin
+      port: 25923
     director_account:
       user: admin
       password: admin
@@ -213,3 +214,5 @@ properties:
     tenant: pivotal
     default_security_groups: [opsmanager]
     default_key_name: joo
+
+  agent: {mbus: "nats://nats:nats-password@192.168.1.51:4222"}

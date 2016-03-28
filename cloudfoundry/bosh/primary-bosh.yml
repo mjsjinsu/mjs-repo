@@ -208,7 +208,7 @@ properties:
   ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
 
   openstack:
-    auth_url: http://14.63.202.11:5000/v2.0/tokens
+    auth_url: http://0.0.0.0:5000/v2.0/tokens
     username: pivotal
     api_key: pivotalpass
     tenant: pivotal

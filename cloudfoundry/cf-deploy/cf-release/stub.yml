@@ -1,0 +1,66 @@
+---
+name: cf-mjs-paas
+
+director_uuid: 4048d97d-f435-495a-9a70-33ca4dcd7e0e 
+
+meta:
+  openstack:
+    net_id: 0757784c-6f3a-49e1-8a4a-91c9b3fcb665
+    auth_url: http://14.63.202.11:5000/v2.0/tokens
+    tenant: ktdspaas 
+    username: ktdspaas
+    api_key: ktdspaas
+    security_groups: [default]
+  floating_static_ips:
+  - 14.63.202.138
+
+networks:
+  - name: floating
+    type: vip
+    cloud_properties:
+      net_id: 0757784c-6f3a-49e1-8a4a-91c9b3fcb665
+      security_groups: [default]
+
+  - name: cf1
+    type: manual
+    subnets:
+    - range: 10.10.5.0/24
+      gateway: 10.10.5.1
+      reserved:
+      - 10.10.5.240 - 10.10.5.254
+      dns:
+      - 192.168.10.104
+      - 8.8.8.8
+      static:
+      - 10.10.5.2 - 10.10.5.50
+      cloud_properties:
+        net_id: 0757784c-6f3a-49e1-8a4a-91c9b3fcb665 
+        security_groups: 
+        - default
+
+ - name: cf2
+    type: manual
+    subnets:
+    - range: 10.10.6.0/24
+      gateway: 10.10.6.1
+      reserved:
+      - 10.10.6.240 - 10.10.6.254
+      dns:
+      - 192.168.10.104
+      - 8.8.8.8
+      static:
+      - 10.10.6.2 - 10.10.6.30
+      cloud_properties:
+        net_id: 0757784c-6f3a-49e1-8a4a-91c9b3fcb665        
+        security_groups: 
+        - default 
+
+properties:
+  domain: mjs.cloud.io
+  system_domain: mjs.cloud.io
+  system_domain_organization: system_org
+  app_domains:
+   - mjs.cloud.io
+
+  ssl:
+    skip_cert_verify: true

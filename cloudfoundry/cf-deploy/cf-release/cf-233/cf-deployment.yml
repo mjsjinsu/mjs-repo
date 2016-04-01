@@ -1412,7 +1412,7 @@ properties:
     skip_cert_verify: true
   support_address: http://support.cloudfoundry.com
   syslog_daemon_config: null
-  system_domain: ktds.cloud.com
+  system_domain: system.ktds.cloud.com
   system_domain_organization: system_org
   traffic_controller:
     disable_access_control: null

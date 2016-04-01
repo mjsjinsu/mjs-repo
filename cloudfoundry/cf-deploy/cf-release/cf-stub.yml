@@ -68,7 +68,7 @@ networks:
 
 properties:
   domain: ktds.cloud.com
-  system_domain: ktds.cloud.com
+  system_domain: system.ktds.cloud.com
   system_domain_organization: system_org
   app_domains:
    - ktds.cloud.com

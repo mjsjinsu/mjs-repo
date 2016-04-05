@@ -959,9 +959,58 @@ properties:
     secure_link:
       secret: blobstore-secret
     tls:
-      cert: '-----BEGIN CERTIFICATE-----'
+      cert: |+
+        -----BEGIN CERTIFICATE-----
+        MIIDmDCCAoACCQD8mbiHIO6CkDANBgkqhkiG9w0BAQsFADCBjDELMAkGA1UEBhMC
+        S1IxDjAMBgNVBAgMBVNlb3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARr
+        dGRzMQ4wDAYDVQQLDAVjbG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEh
+        MB8GCSqGSIb3DQEJARYSamluLXN1Lm1vb25Aa3QuY29tMCAXDTE1MTAyOTA1MTcy
+        MVoYDzIxMTUxMDA1MDUxNzIxWjCBjDELMAkGA1UEBhMCS1IxDjAMBgNVBAgMBVNl
+        b3VsMRAwDgYDVQQHDAdtb2tkb25nMQ0wCwYDVQQKDARrdGRzMQ4wDAYDVQQLDAVj
+        bG91ZDEZMBcGA1UEAwwQKi5rdGRzLmNsb3VkLmNvbTEhMB8GCSqGSIb3DQEJARYS
+        amluLXN1Lm1vb25Aa3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+        AQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorUJE9OU7HpFUec
+        NGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7htRs87I6YH/bmZ
+        EU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE15iq3do0JB8Vf
+        zxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN0EZEu4kDiREp
+        C3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tjndiwf1P5vTw/
+        6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQDSaeE/
+        4pdTGCLQHvtODDlJuOd/z2d+jStHB4RR2iNgS9dhzaPzrg3+DeMkNFj+pwNmcBn5
+        pvtaYn37lAjfm0jA72T0z1u1+i24xKuXnBM5/eN5g94ZuRCdXiwpJXtDai/LJRox
+        0Zw3jBvdiwZqo9pKjraySQdcSNiaIxRkZFefIezGw4LQ9mROkuGVQCVlVATVDNwr
+        C4uVkdl/Csl1VSbE6jKiSl/Hg6JgtJnEK+Z+cyVQZH+iaU1UI6hGo6VMsYCB5ObP
+        9JM4UbUTVIDWPXgq8k+29avGpWlvIoWlp5xI/m/NPTZXjj9JuqM7mw0yX6PkLMQp
+        spNcm1KYtyXOmWvV
+        -----END CERTIFICATE-----
       port: 443
-      private_key: '-----BEGIN RSA PRIVATE KEY-----'
+      private_key: |+
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpAIBAAKCAQEA1nQP/VQ8yZAVmu4wCaQFwfi9grYAmmb/1Uj6fQXd2w4AKorU
+        JE9OU7HpFUecNGBhuyhKPAnrOU71uifXE0pRgAzkjkDu1aTekH4jyRdfCqLQL7ht
+        Rs87I6YH/bmZEU2Q+Sdus1WWdwCgYG11dnjmCbG/0LGl36x0IxCA+iDwQbQ8eKE1
+        5iq3do0JB8VfzxdjpVS1LxYHVd1TeT/rndF2iGNhUtxEi/lutOifmuqMotANrhjN
+        0EZEu4kDiREpC3jYXxuOpSze1SXlQ+Q8Kz9MGfBOqcNyo1tMCTuOCtnE9gz6F9tj
+        ndiwf1P5vTw/6ghZ0GM6dMktZ3DkZo6Rqo/U+QIDAQABAoIBAET0wuNxP66MPvY3
+        WojvDc7mPYGXJjB/qAmb0rd6uHCkWtdTFo2qVoRA87Kc+RQ6XZKBjQUrJ1ChHBBE
+        mTqhrf0fqCo5pNJblhkeBkG12yCfY5PEmJapMdnvnCgwkpBmwZPr4wOVJLGVKPx4
+        lcmHbGh3mDbxuGVonVtdBivnhXmKdKTsodtSIcWkaCFU4/3+FJQzgkPGgXaxdhIv
+        Eqvd+DaCHnAMxk206o5BEdIl0X18cN3GTS1R901mMl+dzv/PBNtSiZ0rstdek1ma
+        XwPE+Zo/vDWWBDnU2989PFJqaV8AzOrN46moByHG07frc2GsF6D2CYCJLDbBHC+x
+        Aak8MpECgYEA/szekTbNXzfZ6VxzUoyC4f3asfa74+mimzBLqeMzsxgr2+Vwz6/P
+        rAIwbjYD9rno+xGHwjA9wuId14ZuaTQKIhHePhMlGK9amohahEPeYNwohB9uskUO
+        bYvCsjZwybhe9V409W9ct2HDmo24Bro27iXBudxblJQeMxci7zwNQaUCgYEA13aP
+        TrZi7oibgqHLyRLJu67WXrq62QAM1ruYavLd9Cvay1ap25RptKoyLC4ORz8FuwhC
+        PYXHdTwnTWuVDQMIRR/fh/IYS6TV3UM2hQmTdpdVTO+MKXC9guEGksY/m2kYc0E2
+        +gmnkEdLLnlma4ou35WeU3Uth7i9HKqs/N9YPcUCgYEAymk5TaZ5U3Ds3SMiQat5
+        tcmR19onvJA3Ko0dLmJdCaLkBJWqHnKNyRkcHBEw6OkbGYf9jtf/2DcEedhDEbPT
+        cOk84ZcX2xpCIYy8S2IW4F9EmGDX8SpGoeNq0WPKCZU7ajRiYa8Lumohlz+Jt15q
+        kJjR4rIY1lkr/G4exGmyJjkCgYEAy8/JpZJfKPYt7DbyVsSf8Rpki30lC+nBO0p+
+        1gPgsnzdXWUgDaZpC03HYgU62mgiGpaoWhv23c3F+7UdbA6HPyP0RVtbYgqNhtxy
+        cQvq4s4qETmzouuTSH9lwWcoefDDARsaTxDc4VyfIFoT6PvwdOzJtHZuWCkHMlu8
+        gQMgLGUCgYAnXdI7V6yagCdnBfZjn0i5943OG9PrrLumnynre6HHf4RcyGioiGqg
+        YHBxaxlChEts6H6RcQ0Q5yVFoCVtg4lZzb7mzhTf3Q/OuIVbjib40lfwDHIBMA7T
+        AOfWY90ipsDk2xGkwuJwPmDaE8rHxYWMJJDWR0eBUqcGGfl9Jn5A0w==
+        -----END RSA PRIVATE KEY-----
   cc:
     allow_app_ssh_access: true
     allowed_cors_domains: []

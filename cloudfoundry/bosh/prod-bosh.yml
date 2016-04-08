@@ -118,6 +118,7 @@ properties:
       password: ktdsadmin1!
       database: bosh
       adapter: mysql2
+      enable_snapshots: true
     cpi_job: cpi
     max_threads: 3
     

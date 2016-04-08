@@ -1,0 +1,154 @@
+---
+name: prod-bosh
+
+director_uuid: 4048d97d-f435-495a-9a70-33ca4dcd7e0e
+
+release:
+  name: bosh
+  version: latest
+
+compilation:
+  workers: 2
+  network: private
+  reuse_compilation_vms: false
+  cloud_properties:
+    instance_type: m1.small
+    availability_zone: nova
+
+update:
+  canaries: 1
+  canary_watch_time: 3000-120000
+  update_watch_time: 3000-120000
+  max_in_flight: 1
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: 192.168.1.0/24
+    gateway: 192.168.1.1
+    static:
+    - 192.168.1.220 - 192.168.1.221
+    reserved:
+    - 192.168.1.2 - 192.168.1.199
+    - 192.168.1.250 - 192.168.1.254
+
+    dns: [192.168.0.12, 8.8.8.8]
+    cloud_properties: {net_id: db791934-bbba-4b75-bb20-219aa4b7430d}
+
+- name: floating
+  type: vip
+
+resource_pools:
+- name: common
+  network: private
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: m1.small
+    availability_zone: nova
+
+disk_pools:
+- name: disks
+  disk_size: 10_000
+
+jobs:
+- name: bosh-data
+  instances: 1
+  templates:
+  - {name: redis, release: bosh}
+  - {name: blobstore, release: bosh}
+  - {name: registry, release: bosh}
+  
+  resource_pool: common
+  persistent_disk_pool: disks
+  networks:
+    - name: private
+      default: [dns, gateway]
+      static_ips: [192.168.1.221]
+
+- name: bosh-api
+  instances: 1
+  templates:
+  - {name: nats, release: bosh}
+  - {name: director, release: bosh}
+  - {name: health_monitor, release: bosh}
+  - {name: cpi, release: bosh}
+
+  resource_pool: common
+  networks:
+    - name: private
+      default: [dns, gateway]
+      static_ips: [192.168.1.220]
+    - name: floating
+      static_ips: [14.63.202.126] # <--- Replace with a floating IP
+
+properties:
+  nats:
+    address: 192.168.1.220
+    port: 4222
+    user: nats
+    password: nats-password
+  
+  redis:
+    listen_address: 0.0.0.0 
+    address: 192.168.1.221
+    password: redis-password
+    port: 25255
+  
+  blobstore:
+    address: 192.168.1.221
+    port: 25250
+    provider: dav
+    agent:
+      user: agent
+      password: agent-password
+    director:
+      user: admin
+      password: admin
+  
+  director:
+    name: bosh
+    address: 192.168.1.220
+    db: &bosh_db
+      host: 192.168.0.190
+      port: 3306
+      user: root
+      password: ktdsadmin1!
+      database: bosh
+      adapter: mysql2
+    cpi_job: cpi
+    max_threads: 3
+    
+  registry:
+    address: 192.168.1.220
+    host: 192.168.1.221
+    db: *bosh_db
+    http:
+      user: admin
+      password: admin
+      port: 25777
+    username: admin
+    password: admin
+    port: 25777
+  
+  hm:
+    http:
+      port: 25923
+    director_account:
+      user: admin
+      password: admin
+    resurrector_enabled: false
+  
+  ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+  openstack:
+    auth_url: http://14.63.202.11:5000/v2.0/tokens
+    username: pivotal
+    api_key: pivotalpass
+    tenant: pivotal
+    default_security_groups: [opsmanager]
+    default_key_name: joo
+  
+  agent: {mbus: "nats://nats:nats-password@192.168.1.220:4222"}

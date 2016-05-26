@@ -1,0 +1,6 @@
+---
+applications:
+- name: spring-mvn-example-app
+  memory: 256M
+  instances: 1
+  path: /root/dev_spring/hajiboot/target/mvnboot-1.0.0-SNAPSHOT.jar

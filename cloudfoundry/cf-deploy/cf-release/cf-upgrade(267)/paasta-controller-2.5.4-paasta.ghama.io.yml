@@ -10,7 +10,7 @@ compilation:
     availability_zone: nova
   network: cf_network_z1
   reuse_compilation_vms: true
-  workers: 6
+  workers: 4
 
 jobs:
 - default_networks:
@@ -242,7 +242,9 @@ jobs:
     release: paasta-controller
   - name: blobstore
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil
+    name: route_registrar
     release: paasta-controller
   update: {}
 
@@ -278,7 +280,9 @@ jobs:
     release: paasta-controller
   - name: blobstore
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil
+    name: route_registrar
     release: paasta-controller
   - name: node_exporter
     release: node-exporter
@@ -351,7 +355,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil
+    name: route_registrar
     release: paasta-controller
   - name: statsd_injector
     release: paasta-controller
@@ -402,7 +408,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil
+    name: route_registrar
     release: paasta-controller
   - name: statsd_injector
     release: paasta-controller
@@ -466,17 +474,25 @@ jobs:
   #  release: paasta-controller
   # - name: pinpoint-buildpack
   #  release: paasta-controller
-  - name: cloud_controller_ng
+  - consumes:
+      nats: nil 
+    name: cloud_controller_ng
     release: paasta-controller
-  - name: cloud_controller_clock
+  - consumes:
+      nats: nil
+    name: cloud_controller_clock
     release: paasta-controller
-  - name: cloud_controller_worker
+  - consumes:
+      nats: nil 
+    name: cloud_controller_worker
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
   - name: statsd_injector
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil 
+    name: route_registrar
     release: paasta-controller
   - name: node_exporter
     release: node-exporter
@@ -540,17 +556,25 @@ jobs:
   #   release: paasta-controller
   # - name: pinpoint-buildpack
   #   release: paasta-controller
-  - name: cloud_controller_ng
+  - consumes:
+      nats: nil 
+    name: cloud_controller_ng
     release: paasta-controller
-  - name: cloud_controller_clock
+  - consumes:
+      nats: nil
+    name: cloud_controller_clock
     release: paasta-controller
-  - name: cloud_controller_worker
+  - consumes:
+      nats: nil 
+    name: cloud_controller_worker
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
   - name: statsd_injector
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil 
+    name: route_registrar
     release: paasta-controller
   update: {}
 
@@ -569,7 +593,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: cloud_controller_clock
+  - consumes:
+      nats: nil
+    name: cloud_controller_clock
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -596,7 +622,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: cloud_controller_worker
+  - consumes:
+      nats: nil
+    name: cloud_controller_worker
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -623,7 +651,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: cloud_controller_worker
+  - consumes:
+      nats: nil
+    name: cloud_controller_worker
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -660,7 +690,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil 
+    name: route_registrar
     release: paasta-controller
   update: {}
 
@@ -695,7 +727,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil
+    name: route_registrar
     release: paasta-controller
   update: {}
 
@@ -922,7 +956,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil 
+    name: route_registrar
     release: paasta-controller
   - name: node_exporter
     release: node-exporter
@@ -972,7 +1008,9 @@ jobs:
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
-  - name: route_registrar
+  - consumes:
+      nats: nil 
+    name: route_registrar
     release: paasta-controller
   update:
     max_in_flight: 1
@@ -998,7 +1036,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: gorouter
+  - consumes:
+      nats: nil
+    name: gorouter
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -1026,7 +1066,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: gorouter
+  - consumes:
+      nats: nil
+    name: gorouter
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -1052,7 +1094,9 @@ jobs:
   - name: consul_agent
     release: paasta-controller
     consumes: {consul: nil}
-  - name: gorouter
+  - consumes:
+      nats: nil 
+    name: gorouter
     release: paasta-controller
   - name: metron_agent
     release: paasta-controller
@@ -1194,6 +1238,7 @@ networks:
     - 172.16.11.43 - 172.16.11.49  #router(ha)
     - 172.16.11.51 - 172.16.11.59  #haproxy(ha)
     - 172.16.11.100 - 172.16.11.254  #diego
+    - 172.16.11.63 #not working IP
     dns:
     - 192.168.17.12
     static:
@@ -3481,6 +3526,8 @@ properties:
     user: admin
   ssl:
     skip_cert_verify: true
+  statsd_injector:
+    deployment: paasta-container
   support_address: http://support.cloudfoundry.com
   syslog_daemon_config: 
     address: 172.16.21.121

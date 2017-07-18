@@ -2,7 +2,7 @@
 compilation:
   cloud_properties:
     name: random
-    instance_type: m1.medium
+    instance_type: m1.small
     availability_zone: nova
   network: paasta-container-network1
   reuse_compilation_vms: true
@@ -179,7 +179,7 @@ jobs:
     max_in_flight: 1
     serial: false
 
-- instances: 4
+- instances: 2
   name: cell_z1
   networks:
   - name: paasta-container-network1
@@ -256,8 +256,8 @@ jobs:
     release: paasta-controller
   - name: cfdot
     release: paasta-container
-  - name: cadvisor
-    release: paasta-container
+  #- name: cadvisor
+  #  release: paasta-container
   update:
     max_in_flight: 1
     serial: false
@@ -377,8 +377,8 @@ jobs:
     release: paasta-controller
   - name: cfdot
     release: paasta-container
-  - name: cadvisor
-    release: paasta-container
+  #- name: cadvisor
+  #  release: paasta-container
   update:
     max_in_flight: 1
     serial: false
@@ -615,6 +615,7 @@ networks:
     gateway: 172.16.11.1					#gateway ip
     reserved:
     - 172.16.11.2 - 172.16.11.99				#reserved ip range
+    - 172.16.11.155
     dns:
     - 192.168.17.12
     - 8.8.8.8						#dns server ip
@@ -951,6 +952,91 @@ properties:
       cc:
         basic_auth_password: internal-password
         basic_auth_username: internal_user
+        ca_cert: |+
+          -----BEGIN CERTIFICATE-----
+          MIIFDTCCAvWgAwIBAgIBATANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDEwtjZi1k
+          aWVnby1jYTAeFw0xNzAzMjQwNjA1MDVaFw0yNzAzMjQwNjA1MDlaMBYxFDASBgNV
+          BAMTC2NmLWRpZWdvLWNhMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA
+          2cq0aidFQkUf+t953SkWV/PpP+5kBI5A2E7LuUKk3/r+8MT4+Wm4kJlo+9EIo+IU
+          tA/UW4liXakrtnPm45gAWRjuuEAjk88mD/eyAVH7MC3XNw4iB5R0iWJgQxpSTSD/
+          qA0DAuuIzXpy4XisWRhWjPNhiFp8BlUMCwsH4FbATM8i1E2tTSrXA8SREYqt8fxJ
+          dpz6ZrIuJDbsIJQD7LJAaIFTtkdR75C3nY20d/5c/s6rdNgQDkZOMKVjKj7cyIl2
+          fTEVE5662yRlPAb1d0bTty8W05SChb7HzxaPxa53h5YPgWbrfaEUeaJ4vDdGGlCB
+          iV7wk/AG6NAHA9PFkh0sw/dhCO+FAHis9q3OtELxvYoyqv236Vk+Labr1QfirpDd
+          9ub+Q7g4aPeEB4zUhcWmtRLpsAGrYyMF2RXXQPIO0U+Ikg+2uLpDSVq08n76mCbt
+          oFnENEhFGSHS1msHPb5SxS3F8POt2BvfjkS6AMSnitgGh+KgX8zQaCaPiPYTb6yI
+          Ae3LiusOUkBsYx6fJlNB+mqaZ2R2i9vQC2eepWAihPfjwRFni/oP8JgJeKQruLf3
+          ZYHDA4XdVEErudfGIhzFxH0MsC2C7Qf5sDnGmD6LWK7D9+EVTEO0niVn2IoAIzhx
+          AcH4njh+61l0L+lT37uccAgI/1llomLQqeZAnwrXsEECAwEAAaNmMGQwDgYDVR0P
+          AQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFB1YIzJ2AcqS
+          41v4NZ5PqMPZDUxXMB8GA1UdIwQYMBaAFB1YIzJ2AcqS41v4NZ5PqMPZDUxXMA0G
+          CSqGSIb3DQEBCwUAA4ICAQAhMR/0lXTOmm/ytL+s/2tmoqfkKUdQTAQhqAgLVxkD
+          nyXQMgpb4r4nwhdt9Za7GfXI1NUPUK6JyGMDZ/TyaReNH5FXWGuTFSpsQEutQrv5
+          YAGRCTMJ8v6sZIctsPf3csNFKGIi96H4nAwjY7Q9iM4zHMXoZrMDp0Z5zuG4XZep
+          ptsCN9T2/pypc9tg7AEwfn85HwS0ew9LnMlWLZR+S/EKaOtRGOry8rgfWy6/Rk0N
+          KoU6/8MPLdvvTmcGJ+xWexj9IVnDCZZif2qNqR9Bdf0zVs3m+qrexcA0BDHVESrg
+          ZrNVYsOzLP/BCMEz3mMqbjyX3T3fLvcD4JOiWoY1dMcbNf+RdNVJ3w0DISrlOOQ4
+          Q4eWnzQ5oJDPop7q4I9yc1g1rFL+FPXm5DlxeIXJGYl0ruD6cDjlk2C0av9vPuB2
+          AXBek+lkXj2Vnw0U9oM3/0MoiZxRG7AGyEeKL0Jenuo9WtyRPQuaMms1gGi8KloK
+          dyzhauCUVlFxdZnAG2AOTTyKDxrHZtCa29qoQtMI+6XmIDQH/M38Z8dHrE14B4zW
+          ClUyRK0IdJatcjJnFW0Af1l3xjgvojWjZUShoMjq2Ot/mR+zU1164nlilO6o4arb
+          tu2Om6lftwbmpF81hBC7IlO/u/13ksF8XoMP/rR8AOzXj2M5YIMzeGTEfyIC/bZB
+          jQ==
+          -----END CERTIFICATE-----
+        client_cert: |+
+          -----BEGIN CERTIFICATE-----
+          MIIEJzCCAg+gAwIBAgIQZbC6CuorqD7dLrykYc08vjANBgkqhkiG9w0BAQsFADAW
+          MRQwEgYDVQQDEwtjZi1kaWVnby1jYTAeFw0xNzA3MTIwODE5NTRaFw0xOTA3MTIw
+          ODE5NTRaMBYxFDASBgNVBAMMC3Rwc193YXRjaGVyMIIBIjANBgkqhkiG9w0BAQEF
+          AAOCAQ8AMIIBCgKCAQEAs1Ozz1uH0S237JiImySnuNVVOc+ndoQ+W+j0/J8+7+xX
+          1SpwGMhQhW4zcbvyzYfww+x9sEp3Xc31cLnybvgnpTT1Q9ruOJEurYsD1Chk4Bn8
+          OmJUsovaD3Y1MBHZqZV9dpVwY8k2YUu/DhZnWRfdcLkWVdDAVtMBDUhB/P/nDdWQ
+          d7q4M5s8v3gNFQA2Hvth0BbbPqKpps/ZJZSFDUJFdNRY4oYiI0OVRdWRnVTEcUlt
+          ZvmzdRCtTsejtMobokKYBwvlMHRMmwNXKC4pp8EBLS0n4OuFyGTXfVQswCoHOIY+
+          HJuoy/Uxrho/AsvHcDqcM+/InuK8iz2BE7Q0tuwVMQIDAQABo3EwbzAOBgNVHQ8B
+          Af8EBAMCA7gwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB0GA1UdDgQW
+          BBSnArVhqk+BpFHu0IUSjLRN+A2VsTAfBgNVHSMEGDAWgBQdWCMydgHKkuNb+DWe
+          T6jD2Q1MVzANBgkqhkiG9w0BAQsFAAOCAgEAdhSChHsHuL4Du0oHEvVr54AodYDh
+          OsSIn0OVN5fCV02QOZMqcDNdikBiMXIPqMVQ76wGC533ye02bKuY32euWuLEf5r9
+          JqOywQmTKI3a6TT0UVF6WbFg/UBAOC9zKWnOKWkxd0+ZVpOkGlTKRErj/Xcc1Wee
+          wZ1bFMM7Ds8wkCMna+Z0mkxEasx7NdUaP/0f/N7+flYu5Mbzo0azWk/4YEd2NG5C
+          XOqR7tug59ubpBS+Q6tt1/7ogLxNq3LuSQTsmBf8pmG/mTn+/JOSynFBUuLH5kPY
+          IyDkaMY28sYnoU/WxYgShi3mgSjC+PkDTbhR7YRn1Cx2SDYZ0+bTeRmFm6Hmyo1j
+          EGOAOeL+1uHdVySVI/AEge/kiV2eGxHabI5ItQhIRBkAqTNG+b41/3k6wtkx7GEA
+          Ra/4LjSDbBqqEvy43Li2dEfeBo+9YKkiJ7nL6U3VxSzB/ZmcTNkKVpMB7uFpe0BF
+          Aep925Fm7vXzFPw/Y4hr1F+TZJfJEFRrVvX+8MjAD8lRB4lFDQ+C5oLtOaADdzNE
+          W3twDkirJTzaFNQmz034aPfm48s6DSKclVrCoVpLFh/ABcTN6uESE1MXeMB+WQTP
+          hiK3lhJX0H5jZmiNmW3/xab8TgdjWj4/SyaAxxOUq1XxXpzJCyakNX84bIN5pfmF
+          U2HcIXOG/FaDCv4=
+          -----END CERTIFICATE-----
+        client_key: |+
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpQIBAAKCAQEAs1Ozz1uH0S237JiImySnuNVVOc+ndoQ+W+j0/J8+7+xX1Spw
+          GMhQhW4zcbvyzYfww+x9sEp3Xc31cLnybvgnpTT1Q9ruOJEurYsD1Chk4Bn8OmJU
+          sovaD3Y1MBHZqZV9dpVwY8k2YUu/DhZnWRfdcLkWVdDAVtMBDUhB/P/nDdWQd7q4
+          M5s8v3gNFQA2Hvth0BbbPqKpps/ZJZSFDUJFdNRY4oYiI0OVRdWRnVTEcUltZvmz
+          dRCtTsejtMobokKYBwvlMHRMmwNXKC4pp8EBLS0n4OuFyGTXfVQswCoHOIY+HJuo
+          y/Uxrho/AsvHcDqcM+/InuK8iz2BE7Q0tuwVMQIDAQABAoIBAAGWSA0ZvkX3pZ0O
+          bIcS9/kGyk5MrCq8WODvWtuxfRkaelyEl6FghHXp18K16xwui87wFNyujAfkfruU
+          qbSZtaAcq98B3QHbJxKaHFqQUPQ6xqStohpCapegcDAQuGBr1kRqZig766NIzFQP
+          lrKPJ4KL4Mq5ojoie+vmK89VZHIW4flM0gQ8GFyY1zK6KrWwJ0w+jBkT32Gn9E1T
+          LsVL3nz/CjiUShSnz41JrxVEQkIs9nyv/XkeYHuUltVFK5alEqC+wDDj0Rrm3U34
+          +5xyPCn7LNzNeh+JvuDEyPyi9cxre/Xe8o4N++Ss82BWEDYJ3uRAMBnOjhA9BsBi
+          cUJPWZECgYEA0WIOj4TnLz45CtC2D382C7AQQ2u6xASnzTN2Eqdy15Gmy9V8Vu+M
+          I4ActztqmrrQO17XGg9fKpCZZLX8HZDCA4Xx0/NeTthokeuBNFP5Dt9LBWvTfzF1
+          wZpAXjaxcS+9NdrdhBii+xuEQxd1e520vRf8Nglyyb642cz0n2GLQMcCgYEA20CT
+          vkkjBF8rrbZyH6BFyLVHxCCaAvj1v3bCmQcSnSynt5dn9ShJ5AvMHCt5YSKDfvxy
+          2/9cDx7Pm78+m0fxAu30lAul4hPU8QFnZ3SC0m30TNbuIJ/RxVQ4G5eeWkfHGVBZ
+          UilfekD/5GZJsi1pNnLeOzFlaZ8EN20QElpn8kcCgYEAkXaIGxj/64hU5Lie4yFD
+          kNceVViQhgGd+idYThla5Xxg3pdQLK17NGaajImQxDIo3DZFReuL9+xBRQBRSND6
+          mKwDl3Yp/KjH7SgpuQrlqnliiz+fzWu1HW1mbo2ctL+vuax13IGpKL6zIlE340tq
+          9zukkn3560K+9UE4aUnBDp0CgYEAh3YnkhqHywyt5N7jNc0FMJNoKrHl1c5RryDF
+          7FwlUPylBtZBwYNJ2966FfF6RdxYGB4LLQdhrmnf5R9MpA3Xx3KTeOCVdc/A8cJn
+          S9D9ftu2Y78rUvbLWTrGi62qhabxSR+OgCfVuKfuMgRMpgxOg/iGe1XyjUZVCZWV
+          p3E55cMCgYEAhxE+JiSPZ47FYY8Nal6am1jYIIKHX071dzB595bAN5tG9esDW82Y
+          j4KOjYWDlNdLP7mQ+cALX/mIG/5qrQNCMN43BxhrkCze+IFlpVh3uNQlzpssY/WI
+          Wir4eI2wT9X3Y1rCHFQFf5NzL0nml+bMozlFBCHEj/Rtve5ujk/p8LY=
+          -----END RSA PRIVATE KEY-----
       dropsonde_port: null
       log_level: error
       traffic_controller_url: wss://doppler.paasta.ghama.io:443
@@ -2350,7 +2436,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2359,7 +2445,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2368,7 +2454,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2377,7 +2463,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2386,7 +2472,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2395,7 +2481,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2404,7 +2490,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2413,7 +2499,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: monitoring
@@ -2422,7 +2508,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.xlarge
@@ -2431,7 +2517,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.medium
@@ -2440,7 +2526,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.medium
@@ -2449,7 +2535,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2458,7 +2544,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2467,7 +2553,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2476,7 +2562,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2485,7 +2571,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2494,7 +2580,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2503,7 +2589,7 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: m1.small
@@ -2512,7 +2598,7 @@ resource_pools:
   network: paasta-container-network1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: monitoring
@@ -2521,7 +2607,7 @@ resource_pools:
   network: paasta-container-network2
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 - cloud_properties: 
     name: random
     instance_type: monitoring
@@ -2530,11 +2616,11 @@ resource_pools:
   network: paasta-container-network3
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3309
+    version: latest
 update:
   canaries: 1
   canary_watch_time: 5000-120000
   max_in_flight: 1
-  serial: false
+  serial: true
   update_watch_time: 5000-120000
 

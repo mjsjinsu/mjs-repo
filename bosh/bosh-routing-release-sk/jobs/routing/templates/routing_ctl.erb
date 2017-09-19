@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set +e
+
+case "$1" in
+  start)
+
+    # Add routes
+    <% p("routing.routes").each do |route| %>
+    route add -net <%= route["subnet"] %> netmask <%= route["netmask"] %> dev <%= route["interface"]%>
+    <% end %>
+
+    # Create file
+    echo "applied" >> /var/vcap/sys/run/routing.done
+
+    ;;
+
+  stop)
+    rm /var/vcap/sys/run/routing.done
+
+    <% p("routing.routes").each do |route| %>
+    route del -net <%= route["subnet"] %> netmask <%= route["netmask"] %> dev <%= route["interface"]%>
+    <% end %>
+
+    ;;
+
+esac
+
+exit 0
